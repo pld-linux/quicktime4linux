@@ -6,6 +6,7 @@ Release:	2
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
+# Source0-md5: 137bca0dfbf85c2733f9b313020e3bca
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-ffmpeg.patch
