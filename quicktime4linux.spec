@@ -13,7 +13,10 @@ Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Source1:	qt4linux-Makefile.am
 Source2:	qt4linux-configure.in
 BuildRequires:	glib-devel
-BuildRequires:	libpng >= 1.0.8
+BuildRequires:	libpng-devel >= 1.0.8
+BuildRequires:	libjpeg-devel
+BuildRequires:	libdv-devel
+BuildRequires:	libraw1394-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
