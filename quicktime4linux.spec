@@ -2,17 +2,27 @@ Summary:	quicktime for Linux
 Name:		quicktime4linux
 Version:	1.1.8
 Release:	1
+License:	GPL
 Group:		Libraries
 Group(pl):	Biblioteki
-Copyright:	GPL
 Source:		http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
 Patch:		quicktime4linux-automake.patch
-URL:		http://heroine.linuxbox.com/
+URL:		http://heroine.linuxbox.com/quicktime.html
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
+Quicktime4linux is a library for reading and writing Quicktime files on UNIX
+systems. Supported by this library video is MJPA, JPEG Photo, PNG, RGB, YUV
+4:2:2, and YUV 4:2:0 compression and supported audio is IMA4, ulaw, and any
+linear PCM format.
+
+%description -l pl
+Quicktime4linux jest bibliotek± do odczytywania i zapisu plików Quicktime
+przeznaczona dla systemów Unix. Obecnie biblioteka wspiera nastêpuj±ce
+nastepuj±ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV 4:2:2 i YUV
+4:2:0, a tak¿e audio IMA4, ulaw i liniowy format PCM.
 
 %package devel
 Summary:	Header files and development documentation for quicktime4linux
