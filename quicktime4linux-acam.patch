@@ -15,7 +15,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +	graphics.c hdlr.c ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c \
 +	mdia.c minf.c moov.c mvhd.c plugin.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c smhd.c \
 +	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c \
-+	twos.c udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c workarounds.c \
++	twos.c udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c wmx2.c workarounds.c \
 +	yuv2.c yuv4.c yv12.c
 +
 +libquicktime_la_LDFLAGS = -version-info 1:6:0
@@ -55,8 +55,8 @@ diff -Nur quicktime.orig/configure.in quicktime/configure.in
 --- quicktime.orig/configure.in	Thu Jan  1 01:00:00 1970
 +++ quicktime/configure.in	Sat May 11 21:28:27 2002
 @@ -0,0 +1,40 @@
-+AC_INIT(quicktime4linux, 1.6.1)
-+AM_INIT_AUTOMAKE(quicktime4linux, 1.6.1)
++AC_INIT(quicktime4linux, 1.6.2)
++AM_INIT_AUTOMAKE
 +AC_CONFIG_SRCDIR([atom.c])
 +AM_CONFIG_HEADER([config.h])
 +

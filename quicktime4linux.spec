@@ -1,15 +1,14 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	1.6.1
-Release:	2
+Version:	1.6.2
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5: 137bca0dfbf85c2733f9b313020e3bca
+# Source0-md5:	bcb007e083e6762d828cc20e1b8d42ef
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
-Patch2:		%{name}-ffmpeg.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -89,7 +88,6 @@ Biblioteki statyczne quicktime4linux.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 rm -rf missing ffmpeg* jpeg jpeg-mmx* lame* libdv-* libogg-* libraw1394* libvorbis-*
@@ -98,14 +96,16 @@ rm -rf missing ffmpeg* jpeg jpeg-mmx* lame* libdv-* libogg-* libraw1394* libvorb
 %{__autoheader}
 %{__autoconf}
 %{__automake}
-%configure --disable-vorbistest
+%configure \
+	--disable-vorbistest
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
