@@ -7,7 +7,7 @@ License:	GPL
 Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Patch0:		%{name}-acam.patch
-Patch1:		%{name}-system-libdv.patch
+Patch1:		%{name}-libs.patch
 Patch2:		%{name}-libogg_libvorbis_1.0_ac_fix.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
@@ -82,13 +82,13 @@ Biblioteki statyczne quicktime4linux.
 %patch2 -p1
 
 %build
-rm -f missing
+rm -rf missing libdv jpeg
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}
 %{__autoconf}
 %{__automake}
-%configure CPPFLAGS="$CPPFLAGS"
+%configure --disable-vorbistest
 
 %{__make}
 
