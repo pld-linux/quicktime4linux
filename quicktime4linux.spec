@@ -75,7 +75,6 @@ aclocal
 autoheader
 automake
 autoconf
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--program-transform-name="s/^qt// ; s/^/qt/"
 %{__make}
@@ -84,8 +83,6 @@ LDFLAGS="-s"; export LDFLAGS
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-
-strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*.*
 
 gzip -9nf AUTHORS README NEWS 
 
