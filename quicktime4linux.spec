@@ -1,23 +1,26 @@
 Summary:	Quicktime for Linux
-Summary(pl):	ObsЁuga formatu Quicktime dla Linuxa
+Summary(pl):	ObsЁuga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	1.3
-Release:	2
+Version:	1.4
+Release:	1
 License:	GPL
 Group:		Libraries
 Group(de):	Libraries
 Group(es):	Bibliotecas
 Group(fr):	Librairies
 Group(pl):	Biblioteki
+Group(pt_BR):	Bibliotecas
+Group(ru):	Библиотеки
+Group(uk):	Б╕бл╕отеки
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Source1:	qt4linux-Makefile.am
 Source2:	qt4linux-configure.in
-Patch0:		%{name}-libdv.patch
+Patch0:		%{name}-libraw1394.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	glib-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libjpeg-devel
-BuildRequires:	libdv-devel
+BuildRequires:	libdv-devel >= 0.9
 BuildRequires:	libraw1394-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -40,8 +43,12 @@ Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nagЁСwkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
+Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(ru):	Разработка/Библиотеки
+Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
 
 %description devel
@@ -56,6 +63,7 @@ Summary(pl):	Po©yteczne narzЙdzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Graphics
 Group(de):	Applikationen/Grafik
 Group(pl):	Aplikacje/Grafika
+Group(pt):	AplicaГУes/GrАficos
 Requires:	%{name} = %{version}
 
 %description progs
@@ -69,8 +77,12 @@ Summary:	Static quicktime4linux libraries
 Summary(pl):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
+Group(es):	Desarrollo/Bibliotecas
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
+Group(pt_BR):	Desenvolvimento/Bibliotecas
+Group(ru):	Разработка/Библиотеки
+Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name}-devel = %{version}
 
 %description static
@@ -82,13 +94,12 @@ Biblioteki statyczne quicktime4linux.
 %prep
 %setup -q
 %patch -p1
-rm -rf Makefile global_config configure libdv
+rm -f Makefile global_config configure
 install %{SOURCE1} Makefile.am
 install %{SOURCE2} configure.in
 
 %build
 aclocal
-autoheader
 automake -a -c
 autoconf
 %configure

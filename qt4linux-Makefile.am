@@ -1,23 +1,25 @@
 lib_LTLIBRARIES = libquicktime.la
-libquicktime_la_SOURCES = atom.c codecs.c colormodels.c ctab.c dinf.c dref.c dv.c edts.c elst.c \
-	graphics.c hdlr.c ima4.c jpeg.c jpeg_old.c libmjpeg.c matrix.c mdat.c mdhd.c \
+libquicktime_la_SOURCES = atom.c cmodel_default.c cmodel_yuv420p.c cmodel_yuv422.c \
+	codecs.c colormodels.c ctab.c dinf.c dref.c dv.c edts.c elst.c \
+	graphics.c hdlr.c ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c \
 	mdia.c minf.c moov.c mvhd.c plugin.c qtpng.c quicktime.c raw.c rawaudio.c smhd.c \
 	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c \
-	twos.c udta.c ulaw.c util.c vmhd.c yuv2.c yuv4.c yv12.c
+	twos.c udta.c ulaw.c util.c vmhd.c workarounds.c yuv2.c yuv4.c yv12.c
 
-libquicktime_la_LDFLAGS = -version-info 1:3:0
+libquicktime_la_LDFLAGS = -version-info 1:4:0
 libquicktime_la_LIBADD = -L/usr/X11R6/lib -lpng -ljpeg -ldv -lraw1394 -lpthread
 
 includedir = $(prefix)/include/quicktime
-include_HEADERS = quicktime.h private.h codecs.h
+include_HEADERS = quicktime.h qtprivate.h
 
-INCLUDES = $(GLIB_CFLAGS) -I/usr/X11R6/include -I/usr/X11R6/include/libdv -DUSE_FIREWIRE
+INCLUDES = $(GLIB_CFLAGS) -I/usr/X11R6/include -I/usr/X11R6/include/libdv -DHAVE_FIREWIRE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
-bin_PROGRAMS = qtdump qtmake_streamable qtdechunk qtrecover qtyuv4toyuv qtinfo
+bin_PROGRAMS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv qtrecover qtrechunk
 
 qtdump_SOURCES = dump.c
 qtmake_streamable_SOURCES = make_streamable.c
 qtdechunk_SOURCES = dechunk.c
+qtrechunk_SOURCES = rechunk.c
 qtrecover_SOURCES = recover.c
 qtyuv4toyuv_SOURCES = yuv4toyuv.c
 qtinfo_SOURCES = qtinfo.c
@@ -25,6 +27,7 @@ qtinfo_SOURCES = qtinfo.c
 qtdump_LDADD = -L. -lquicktime
 qtmake_streamable_LDADD = -L. -lquicktime
 qtdechunk_LDADD = -L. -lquicktime
+qtrechunk_LDADD = -L. -lquicktime
 qtrecover_LDADD = -L. -lquicktime
 qtyuv4toyuv_LDADD = -L. -lquicktime
 qtinfo_LDADD = -L. -lquicktime
