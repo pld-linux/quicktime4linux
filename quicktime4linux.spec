@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	1.5.5
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
@@ -18,7 +18,7 @@ BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libraw1394-devel
 BuildRequires:	libtool
-BuildRequires:	libvorbis-devel
+BuildRequires:	libvorbis-devel >= 1:1.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -99,8 +99,6 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 cp -f codecs.h funcprotos.h colormodels.h graphics.h $RPM_BUILD_ROOT%{_includedir}/quicktime
 
-gzip -9nf README
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -109,7 +107,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.gz
+%doc README
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
 %files progs
