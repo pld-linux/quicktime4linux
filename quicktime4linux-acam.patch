@@ -1,7 +1,7 @@
 diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 --- quicktime.orig/Makefile.am	Thu Jan  1 01:00:00 1970
 +++ quicktime/Makefile.am	Sat May 11 21:29:10 2002
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,49 @@
 +ENCORE_DIR = encore50
 +DECORE_DIR = decore50
 +ENCORE_INCLUDE = $(ENCORE_DIR)/encore.h
@@ -24,7 +24,8 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +	$(DECORE_DIR)/libdecore.la $(ENCORE_DIR)/libencore.la -ldl -lpthread
 +
 +includedir = $(prefix)/include/quicktime
-+include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h
++include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h \
++	libdv.h libmjpeg.h jpeg_old.h jpeg.h
 +
 +INCLUDES = $(GLIB_CFLAGS) $(LIBDV_CFLAGS) $(LIBRAW1394_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
 +	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/ffmpeg \

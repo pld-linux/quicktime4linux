@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	1.6.1
-Release:	1
+Release:	2
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
@@ -17,7 +17,7 @@ BuildRequires:	glib-devel
 BuildRequires:	lame-libs-devel
 BuildRequires:	libdv-devel >= 0.99
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.5.0
+BuildRequires:	libmpeg3-devel >= 1.5.0-2
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libraw1394-devel
@@ -43,11 +43,16 @@ Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}
+Requires:	ffmpeg-devel >= 0.4.6
 Requires:	glib-devel
-Requires:	libpng-devel >= 1.0.8
+Requires:	lame-libs-devel
+Requires:	libdv-devel >= 0.99
 Requires:	libjpeg-devel
-Requires:	libdv-devel
+Requires:	libmpeg3-devel >= 1.5.0-2
+Requires:	libogg-devel
+Requires:	libpng-devel >= 1.0.8
 Requires:	libraw1394-devel
+Requires:	libvorbis-devel >= 1:1.0
 
 %description devel
 Header files and development documentation for quicktime4linux.

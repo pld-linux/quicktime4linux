@@ -1,15 +1,18 @@
 diff -uNr quicktime.orig/jpeg_old.h quicktime/jpeg_old.h
 --- quicktime.orig/jpeg_old.h	Mon Oct  1 05:16:38 2001
 +++ quicktime/jpeg_old.h	Fri Nov  8 19:02:43 2002
-@@ -11,7 +11,7 @@
+@@ -11,9 +11,9 @@
  #endif
  
  
 -#include "jpeg/jpeglib.h"
 +#include <jpeglib.h>
  #include <png.h>       /* Need setjmp.h included by png.h */
- #include "pthread.h"
+-#include "pthread.h"
++#include <pthread.h>
  
+ struct my_error_mgr {
+   struct jpeg_error_mgr pub;	/* "public" fields */
 diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
 --- quicktime.orig/libdv.h	Mon Dec  3 14:48:32 2001
 +++ quicktime/libdv.h	Fri Nov  8 19:02:43 2002
@@ -31,12 +34,15 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
 diff -uNr quicktime.orig/libmjpeg.h quicktime/libmjpeg.h
 --- quicktime.orig/libmjpeg.h	Wed Nov 28 16:03:55 2001
 +++ quicktime/libmjpeg.h	Fri Nov  8 19:02:43 2002
-@@ -30,7 +30,7 @@
+@@ -30,9 +30,9 @@
  
  
  #include <stdio.h>
 -#include "jpeg/jpeglib.h"
 +#include <jpeglib.h>
  #include <png.h>       /* Need setjmp.h included by png.h */
- #include "pthread.h"
+-#include "pthread.h"
++#include <pthread.h>
  
+ #define MAXFIELDS 2
+ #define QUICKTIME_MJPA_MARKSIZE 40
