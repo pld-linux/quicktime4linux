@@ -34,7 +34,7 @@ diff -uNr quicktime.orig/libmjpeg.h quicktime/libmjpeg.h
  #include <stdio.h>
 -#include "jpeg/jpeglib.h"
 +#include <jpeglib.h>
- #include <png.h>       /* Need setjmp.h included by png.h */
+ #include <png.h>              /* Need setjmp.h as included by png.h */
 -#include "pthread.h"
 +#include <pthread.h>
  

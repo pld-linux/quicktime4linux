@@ -1,24 +1,24 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.0.0
+Version:	2.0.1
 Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	14f32cf887f50f8d1dc9dbbc72a1c206
+# Source0-md5:	41614c9ad55e652e64a3dbe14f1d6ecc
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	ffmpeg-devel >= 0.4.6
+BuildRequires:	ffmpeg-devel >= 0.4.8
 BuildRequires:	glib-devel
 BuildRequires:	lame-libs-devel
 BuildRequires:	libdv-devel >= 0.99
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.5.0-2
+BuildRequires:	libmpeg3-devel >= 1.5.3
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
@@ -43,12 +43,12 @@ Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}
-Requires:	ffmpeg-devel >= 0.4.6
+Requires:	ffmpeg-devel >= 0.4.8
 Requires:	glib-devel
 Requires:	lame-libs-devel
 Requires:	libdv-devel >= 0.99
 Requires:	libjpeg-devel
-Requires:	libmpeg3-devel >= 1.5.0-2
+Requires:	libmpeg3-devel >= 1.5.3
 Requires:	libogg-devel
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.0

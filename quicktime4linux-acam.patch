@@ -3,9 +3,9 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +++ quicktime/Makefile.am	Sat May 11 21:29:10 2002
 @@ -0,0 +1,49 @@
 +ENCORE_DIR = encore50
-+DECORE_DIR = decore50
++DECORE_DIR = #decore50
 +ENCORE_INCLUDE = $(ENCORE_DIR)/encore.h
-+DECORE_INCLUDE = $(DECORE_DIR)/decore.h
++#DECORE_INCLUDE = $(DECORE_DIR)/decore.h
 +
 +SUBDIRS = $(DECORE_DIR) $(ENCORE_DIR)
 +lib_LTLIBRARIES = libquicktime.la
@@ -18,10 +18,10 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +	udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c wma.c wmx2.c workarounds.c \
 +	yuv2.c yuv4.c yv12.c
 +
-+libquicktime_la_LDFLAGS = -version-info 2:0:1
++libquicktime_la_LDFLAGS = -version-info 2:1:1
 +libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame \
 +	$(LIBDV_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
-+	$(DECORE_DIR)/libdecore.la $(ENCORE_DIR)/libencore.la -ldl -lpthread
++	-lavcodec $(ENCORE_DIR)/libencore.la -ldl -lpthread
 +
 +includedir = $(prefix)/include/quicktime
 +include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h \
@@ -29,8 +29,8 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +
 +INCLUDES = $(GLIB_CFLAGS) $(LIBDV_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
 +	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/ffmpeg \
-+	   -I$(DECORE_DIR) -I$(ENCORE_DIR) \
-+	   -DDECORE_INCLUDE=\"$(DECORE_INCLUDE)\" -DENCORE_INCLUDE=\"$(ENCORE_INCLUDE)\" \
++	   -I$(ENCORE_DIR) \
++	   -DENCORE_INCLUDE=\"$(ENCORE_INCLUDE)\" \
 +	   -DLINUX -D_DECORE -D_REENTRANT \
 +	   -DHAVE_FIREWIRE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 +
@@ -54,8 +54,8 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 diff -Nur quicktime.orig/configure.in quicktime/configure.in
 --- quicktime.orig/configure.in	Thu Jan  1 01:00:00 1970
 +++ quicktime/configure.in	Sat May 11 21:28:27 2002
-@@ -0,0 +1,39 @@
-+AC_INIT(quicktime4linux, 1.6.2)
+@@ -0,0 +1,38 @@
++AC_INIT(quicktime4linux, 2.0.1)
 +AM_INIT_AUTOMAKE
 +AC_CONFIG_SRCDIR([atom.c])
 +AM_CONFIG_HEADER([config.h])
@@ -90,7 +90,6 @@ diff -Nur quicktime.orig/configure.in quicktime/configure.in
 +PKG_CHECK_MODULES(LIBDV, libdv >= 0.99)
 +
 +AC_CONFIG_FILES([Makefile
-+                 docs/Makefile
 +		 decore50/Makefile
 +		 encore50/Makefile])
 +AC_OUTPUT
