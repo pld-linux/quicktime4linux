@@ -1,18 +1,19 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.0.2
-Release:	2
+Version:	2.0.3
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	cd5699025da93b8f1c0547abdbf2c8a5
+# Source0-md5:	9db3976a8743da2ade328bb66aab3753
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	faad2-devel >= 2.0
 BuildRequires:	ffmpeg-devel >= 0.4.8
 BuildRequires:	glib-devel
 BuildRequires:	lame-libs-devel >= 3.93.1
@@ -46,6 +47,7 @@ Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	faad2-devel >= 2.0
 Requires:	ffmpeg-devel >= 0.4.8
 Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
@@ -92,8 +94,10 @@ Biblioteki statyczne quicktime4linux.
 %patch1 -p1
 %patch2 -p1
 
+rm -rf faad2 ffmpeg-* jpeg jpeg-mmx-* lame-* libdv-* libogg-* libvorbis-*
+%{__perl} -pi -e 's@"faad2/include/faad\.h"@<faad.h>@' mp4a.c
+
 %build
-rm -rf ffmpeg-* jpeg jpeg-mmx-* lame-* libdv-* libogg-* libvorbis-*
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}
