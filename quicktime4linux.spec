@@ -8,6 +8,8 @@ Copyright:	GPL
 Source:		http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
 Patch:		quicktime4linux-automake.patch
 URL:		http://heroine.linuxbox.com/
+BuildRequires:	libjpeg-devel
+BuildRequires:	libpng-devel
 BuildRoot:	/tmp/%{name}-%{version}-root
 
 %description
