@@ -8,6 +8,7 @@ Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-system-libdv.patch
+Patch2:		%{name}-libogg_libvorbis_1.0_ac_fix.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -78,6 +79,7 @@ Biblioteki statyczne quicktime4linux.
 %setup -q -n quicktime
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 rm -f missing
