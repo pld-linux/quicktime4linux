@@ -10,7 +10,7 @@ Patch:		quicktime4linux-automake.patch
 URL:		http://heroine.linuxbox.com/quicktime.html
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 Quicktime4linux is a library for reading and writing Quicktime files on UNIX
