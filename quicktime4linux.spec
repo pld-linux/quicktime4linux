@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	1.4
-Release:	1
+Release:	2
 License:	GPL
 Group:		Libraries
 Group(de):	Libraries
@@ -116,6 +116,7 @@ automake -a -c
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
+cp codecs.h funcprotos.h colormodels.h graphics.h $RPM_BUILD_ROOT/%{_includedir}/quicktime
 
 gzip -9nf README
 
