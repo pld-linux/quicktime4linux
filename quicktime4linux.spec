@@ -1,7 +1,7 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuxa
 Name:		quicktime4linux
-Version:	1.2
+Version:	1.3
 Release:	1
 License:	GPL
 Group:		Libraries
@@ -10,7 +10,7 @@ Group(fr):	Librairies
 Group(pl):	Biblioteki
 URL:		http://heroine.linuxave.net/quicktime.html
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
-Patch0:		%{name}-longlong.patch
+#Patch0:		%{name}-longlong.patch
 Patch1:		%{name}-shared.patch
 Patch2:		%{name}-headers.patch
 Patch3:		%{name}-install.patch
@@ -79,7 +79,7 @@ Biblioteki statyczne quicktime4linux.
 %prep
 %setup -q
 chmod u+w jpeg
-%patch0 -p1 
+#%patch0 -p1 
 %patch1 -p1 
 %patch2 -p1
 %patch3 -p1
