@@ -1,17 +1,22 @@
 Summary:	quicktime for Linux
 Name:		quicktime4linux
-Version:	1.1.9
-Release:	2
+Version:	1.2
+Release:	1
 License:	GPL
 Group:		Libraries
 Group(fr):	Librairies
 Group(pl):	Biblioteki
-Source0:	http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
-Patch0:		%{name}-automake.patch
-URL:		http://heroine.linuxbox.com/quicktime.html
-BuildRequires:	libjpeg-devel
+URL:		http://heroine.linuxave.net/quicktime.html
+Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
+Patch0:		%{name}-longlong.patch
+Patch1:		%{name}-shared.patch
+Patch2:		%{name}-headers.patch
+Patch3:		%{name}-install.patch
+BuildRequires:	glib-devel
 BuildRequires:	libpng >= 1.0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_prefix		/usr/X11R6
 
 %description
 Quicktime4linux is a library for reading and writing Quicktime files
@@ -68,23 +73,25 @@ Biblioteki statyczne quicktime4linux.
 
 %prep
 %setup -q
-%patch -p1 
+chmod u+w jpeg
+%patch0 -p1 
+%patch1 -p1 
+%patch2 -p1
+%patch3 -p1
+ln -sf . quicktime
 
 %build
-aclocal
-autoheader
-automake
-autoconf
-%configure \
-	--program-transform-name="s/^qt// ; s/^/qt/"
-%{__make}
+./configure \
+	--no-mmx
+
+%{__make} COPT="$RPM_OPT_FLAGS -I./ -I../"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install DESTDIR=$RPM_BUILD_ROOT%{_prefix}
 
-gzip -9nf AUTHORS README NEWS 
+gzip -9nf README docs/*.html
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -102,10 +109,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc docs/*.html
+%doc docs/*.html.gz
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/lib*.la
-%{_includedir}/*
+%dir %{_includedir}/quicktime
+%dir %{_includedir}/quicktime/libdv
+%dir %{_includedir}/quicktime/libraw1394
+%{_includedir}/quicktime/*.h
+%{_includedir}/quicktime/libdv/*.h
+%{_includedir}/quicktime/libraw1394/*.h
 
 %files static
 %defattr(644,root,root,755)
