@@ -10,10 +10,8 @@ Group(fr):	Librairies
 Group(pl):	Biblioteki
 URL:		http://heroine.linuxave.net/quicktime.html
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
-#Patch0:		%{name}-longlong.patch
-Patch1:		%{name}-shared.patch
-Patch2:		%{name}-headers.patch
-Patch3:		%{name}-install.patch
+Source1:	qt4linux-Makefile.am
+Source2:	qt4linux-configure.in
 BuildRequires:	glib-devel
 BuildRequires:	libpng >= 1.0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -78,23 +76,23 @@ Biblioteki statyczne quicktime4linux.
 
 %prep
 %setup -q
-chmod u+w jpeg
-#%patch0 -p1 
-%patch1 -p1 
-%patch2 -p1
-%patch3 -p1
-ln -sf . quicktime
+rm -rf Makefile global_config configure
+install %{SOURCE1} Makefile.am
+install %{SOURCE2} configure.in
 
 %build
-./configure \
-	--no-mmx
+aclocal
+autoheader
+automake -a -c
+autoconf
+%configure
 
-%{__make} COPT="$RPM_OPT_FLAGS -I./ -I../"
+%{__make} CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT%{_prefix}
+%{__make} install DESTDIR=$RPM_BUILD_ROOT
 
 gzip -9nf README docs/*.html
 
@@ -117,11 +115,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/*.html.gz
 %attr(755,root,root) %{_libdir}/lib*.so
 %dir %{_includedir}/quicktime
-%dir %{_includedir}/quicktime/libdv
-%dir %{_includedir}/quicktime/libraw1394
 %{_includedir}/quicktime/*.h
-%{_includedir}/quicktime/libdv/*.h
-%{_includedir}/quicktime/libraw1394/*.h
 
 %files static
 %defattr(644,root,root,755)
