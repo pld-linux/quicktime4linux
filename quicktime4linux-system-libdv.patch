@@ -1,0 +1,899 @@
+--- quicktime.orig/dv_encode.c	Thu Jan  1 01:00:00 1970
++++ quicktime/dv_encode.c	Sat May 11 23:07:52 2002
+@@ -0,0 +1,885 @@
++/* stripped down encode.c from modified libdv sources */
++
++#include <time.h>
++#include <math.h>
++#include <string.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <glib.h>
++
++#include "libdv/encode.h"
++#include "libdv/idct_248.h"
++#include "libdv/quant.h"
++#include "libdv/weighting.h"
++#include "libdv/vlc.h"
++#include "libdv/parse.h"
++#include "libdv/place.h"
++
++#include "libdv/enc_input.h"
++#include "libdv/enc_output.h"
++
++#define BITS_PER_LONG  32
++
++/* FIXME: Just guessed! */
++#define VLC_BITS_ON_FULL_MBLOCK_CYCLE_QUANT_2 750
++#define VLC_MAX_RUNS_PER_CYCLE_QUANT_2        3
++#define VLC_BITS_ON_FULL_MBLOCK_CYCLE_QUANT_3 500
++#define VLC_MAX_RUNS_PER_CYCLE_QUANT_3        3
++
++typedef unsigned long dv_vlc_entry_t;
++
++static inline unsigned long get_dv_vlc_val(dv_vlc_entry_t v) 
++{
++	return (v >> 8);
++}
++
++static inline unsigned long get_dv_vlc_len(dv_vlc_entry_t v)
++{
++	return v & 0xff;
++}
++
++static inline dv_vlc_entry_t set_dv_vlc(unsigned long val, unsigned long len)
++{
++	return len | (val << 8);
++}
++
++typedef struct dv_vlc_block_s {
++	dv_vlc_entry_t coeffs[128] ALIGN8;
++	dv_vlc_entry_t * coeffs_end;
++	dv_vlc_entry_t * coeffs_start;
++	guint coeffs_bits;
++	long bit_offset;
++	long bit_budget;
++	gboolean can_supply;
++} dv_vlc_block_t;
++
++extern gint     dv_super_map_vertical[5];
++extern gint     dv_super_map_horizontal[5];
++
++extern gint    dv_parse_bit_start[6];
++extern gint    dv_parse_bit_end[6];
++
++static long runs_used[15];
++static long cycles_used[15*5*6];
++static long classes_used[4];
++static long qnos_used[16];
++static long dct_used[2];
++static long vlc_overflows;
++
++static inline void
++dv_place_411_macroblock(dv_macroblock_t *mb) 
++{
++	gint mb_num; /* mb number withing the 6 x 5 zig-zag pattern  */
++	gint mb_num_mod_6, mb_num_div_6; /* temporaries */
++	gint mb_row;    /* mb row within sb (de-zigzag) */
++	gint mb_col;    /* mb col within sb (de-zigzag) */
++	/* Column offset of superblocks in macroblocks. */
++	static const guint column_offset[] = {0, 4, 9, 13, 18};  
++	
++	/* Consider the area spanned super block as 30 element macroblock
++	   grid (6 rows x 5 columns).  The macroblocks are laid out in a in
++	   a zig-zag down and up the columns of the grid.  Of course,
++	   superblocks are not perfect rectangles, since there are only 27
++	   blocks.  The missing three macroblocks are either at the start
++	   or end depending on the superblock column.
++	
++	   Within a superblock, the macroblocks start at the topleft corner
++	   for even-column superblocks, and 3 down for odd-column
++	   superblocks. */
++
++	mb_num = ((mb->j % 2) == 1) ? mb->k + 3: mb->k;  
++	mb_num_mod_6 = mb_num % 6;
++	mb_num_div_6 = mb_num / 6;
++
++	/* Compute superblock-relative row position (de-zigzag) */
++	mb_row = ((mb_num_div_6 % 2) == 0) ? 
++		mb_num_mod_6 : (5 - mb_num_mod_6); 
++	/* Compute macroblock's frame-relative column position (in blocks) */
++	mb_col = (mb_num_div_6 + column_offset[mb->j]) * 4;
++	/* Compute frame-relative byte offset of macroblock's top-left corner
++	   with special case for right-edge macroblocks */
++	if(mb_col < (22 * 4)) {
++		/* Convert from superblock-relative row position 
++		   to frame relative (in blocks). */
++		mb_row += (mb->i * 6); /* each superblock is 6 blocks high */
++		/* Normal case */
++	} else { 
++		/* Convert from superblock-relative row position to 
++		   frame relative (in blocks). */
++		mb_row = mb_row * 2 + mb->i * 6; 
++                /* each right-edge macroblock is 2 blocks high, 
++		   and each superblock is 6 blocks high */
++	}
++	mb->x = mb_col * 8;
++	mb->y = mb_row * 8;
++} /* dv_place_411_macroblock */
++
++static inline void 
++dv_place_420_macroblock(dv_macroblock_t *mb) 
++{
++	gint mb_num; /* mb number withing the 6 x 5 zig-zag pattern */
++	gint mb_num_mod_3, mb_num_div_3; /* temporaries */
++	gint mb_row;    /* mb row within sb (de-zigzag) */
++	gint mb_col;    /* mb col within sb (de-zigzag) */
++	/* Column offset of superblocks in macroblocks. */
++	static const guint column_offset[] = {0, 9, 18, 27, 36};  
++	
++	/* Consider the area spanned super block as 30 element macroblock
++	   grid (6 rows x 5 columns).  The macroblocks are laid out in a in
++	   a zig-zag down and up the columns of the grid.  Of course,
++	   superblocks are not perfect rectangles, since there are only 27
++	   blocks.  The missing three macroblocks are either at the start
++	   or end depending on the superblock column. */
++	
++	/* Within a superblock, the macroblocks start at the topleft corner
++	   for even-column superblocks, and 3 down for odd-column
++	   superblocks. */
++	mb_num = mb->k;  
++	mb_num_mod_3 = mb_num % 3;
++	mb_num_div_3 = mb_num / 3;
++	/* Compute superblock-relative row position (de-zigzag) */
++	mb_row = ((mb_num_div_3 % 2) == 0) ? mb_num_mod_3 : (2- mb_num_mod_3); 
++	/* Compute macroblock's frame-relative column position (in blocks) */
++	mb_col = mb_num_div_3 + column_offset[mb->j];
++	/* Compute frame-relative byte offset of macroblock's top-left corner
++	   Convert from superblock-relative row position to frame relative 
++	   (in blocks). */
++	mb_row += (mb->i * 3); /* each right-edge macroblock is 
++				  2 blocks high, and each superblock is 
++				  6 blocks high */
++	mb->x = mb_col * 16;
++	mb->y = mb_row * 16;
++} /* dv_place_420_macroblock */
++
++/* FIXME: Could still be faster... */
++static inline guint put_bits(unsigned char *s, guint offset, 
++                             guint len, guint value)
++{
++        s += (offset >> 3);
++        
++        value <<= (24 - len);
++        value &= 0xffffff;
++        value >>= (offset & 7);
++        s[0] |= (value >> 16) & 0xff;
++        s[1] |= (value >> 8) & 0xff;
++        s[2] |= value & 0xff;
++        return offset + len;
++}
++
++dv_vlc_entry_t * vlc_encode_lookup;
++
++static inline void vlc_encode(int run, int amp, int sign, dv_vlc_entry_t * o)
++{
++	dv_vlc_entry_t * s= vlc_encode_lookup + 2 * ((amp + 255) | (run << 9));
++	*o++ = *s++;
++	*o = *s++ | (sign << 8);
++}
++
++static unsigned short reorder_88[64] = {
++	1, 2, 6, 7,15,16,28,29,
++	3, 5, 8,14,17,27,30,43,
++	4, 9,13,18,26,31,42,44,
++	10,12,19,25,32,41,45,54,
++	11,20,24,33,40,46,53,55,
++	21,23,34,39,47,52,56,61,
++	22,35,38,48,51,57,60,62,
++	36,37,49,50,58,59,63,64
++};
++static unsigned short reorder_248[64] = {
++	1, 3, 7,19,21,35,37,51,
++	5, 9,17,23,33,39,49,53,
++	11,15,25,31,41,47,55,61,
++	13,27,29,43,45,57,59,63,
++
++	2, 4, 8,20,22,36,38,52,
++	6,10,18,24,34,40,50,54,
++	12,16,26,32,42,48,56,62,
++	14,28,30,44,46,58,60,64
++};
++
++static void reorder_block(dv_block_t *bl)
++{
++	dv_coeff_t zigzag[64];
++	int i;
++	const unsigned short *reorder;
++
++	if (bl->dct_mode == DV_DCT_88)
++		reorder = reorder_88;
++	else
++		reorder = reorder_248;
++
++	for (i = 0; i < 64; i++) {
++		*(unsigned short*) ((char*) zigzag + reorder[i])=bl->coeffs[i];
++	}
++	memcpy(bl->coeffs, zigzag, 64 * sizeof(dv_coeff_t));
++}
++
++static unsigned long vlc_encode_block(dv_coeff_t* coeffs, dv_vlc_block_t* out)
++{
++	dv_vlc_entry_t * o = out->coeffs;
++	dv_coeff_t * z = coeffs + 1; /* First AC coeff */
++	dv_coeff_t * z_end = coeffs + 64;
++	int run, amp, sign;
++	int num_bits = 0;
++
++	do {
++		run = 0;
++		while (*z == 0) {
++			z++; run++;
++			if (z == z_end) { 
++				return num_bits;
++			}
++		}
++
++		amp = *z++;
++		sign = 0;
++		if (amp < 0) {
++			amp = -amp;
++			sign = 1;
++		}
++		vlc_encode(run, amp, sign, o);
++		num_bits += get_dv_vlc_len(*o++);
++		num_bits += get_dv_vlc_len(*o++);
++	} while (z != z_end);
++	*o++ = set_dv_vlc(0x6, 4); /* EOB */
++
++	out->coeffs_start = out->coeffs;
++	out->coeffs_end = o;
++	out->coeffs_bits = num_bits + 4;
++	return num_bits;
++}
++
++static void vlc_make_fit(dv_vlc_block_t * bl, int num_blocks, long bit_budget)
++{
++	dv_vlc_block_t* b = bl + num_blocks;
++	long bits_used = 0;
++	for (b = bl; b != bl + num_blocks; b++) {
++		bits_used += b->coeffs_bits;
++	}
++	if (bits_used <= bit_budget) {
++		return;
++	}
++	vlc_overflows++;
++	while (bits_used > bit_budget) {
++		b--;
++		if (b->coeffs_end != b->coeffs + 1) {
++			b->coeffs_end--;
++			bits_used -= get_dv_vlc_len(*b->coeffs_end);
++			b->coeffs_bits -= get_dv_vlc_len(*b->coeffs_end);
++		}
++		if (b == bl) {
++			b = bl + num_blocks;
++		}
++	}
++	for (b = bl; b != bl + num_blocks; b++) {
++		b->coeffs_end[-1] = set_dv_vlc(0x6, 4); /* EOB */
++	}
++}
++
++static inline void vlc_split_code(dv_vlc_block_t * src, 
++				  dv_vlc_block_t * dst,
++				  unsigned char *vsbuffer)
++{
++	dv_vlc_entry_t* e = src->coeffs_start;	
++	long val = get_dv_vlc_val(*e);
++	long len = get_dv_vlc_len(*e);
++			
++	len -= dst->bit_budget; 
++	val >>= len;
++	dst->bit_offset = put_bits(vsbuffer,
++				   dst->bit_offset, dst->bit_budget, val);
++	dst->bit_budget = 0;
++	*e = set_dv_vlc(get_dv_vlc_val(*e) & ((1 << len)-1), len);
++}	   
++
++static void vlc_encode_block_pass_1(dv_vlc_block_t * bl, 
++				    unsigned char *vsbuffer,
++				    int vlc_encode_passes)
++{
++	dv_vlc_entry_t * start = bl->coeffs_start;
++	dv_vlc_entry_t * end = bl->coeffs_end;
++	unsigned long bit_budget = bl->bit_budget;
++	unsigned long bit_offset = bl->bit_offset;
++
++	while (start != end && bit_budget >= get_dv_vlc_len(*start)) {
++		dv_vlc_entry_t code = *start;
++		unsigned long len = get_dv_vlc_len(code);
++		unsigned long val = get_dv_vlc_val(code);
++		bit_offset = put_bits(vsbuffer, bit_offset, len, val);
++		bit_budget -= len;
++		start++;
++	}
++
++	bl->coeffs_start = start;
++	bl->bit_budget = bit_budget;
++	bl->bit_offset = bit_offset;
++	if (vlc_encode_passes > 1) {
++		if (bl->coeffs_start == bl->coeffs_end) {
++			bl->can_supply = 1;
++		} else {
++			vlc_split_code(bl, bl, vsbuffer);
++			bl->can_supply = 0;
++		}
++	}
++}
++
++static void vlc_encode_block_pass_n(dv_vlc_block_t * blocks, 
++				    unsigned char *vsbuffer,
++				    int vlc_encode_passes, int current_pass)
++{
++	dv_vlc_block_t * supplier[30];
++	dv_vlc_block_t * receiver[30];
++	int b,max_b;
++	dv_vlc_block_t ** s_;
++	dv_vlc_block_t ** r_;
++	dv_vlc_block_t ** s_last = supplier;
++	dv_vlc_block_t ** r_last = receiver;
++
++	if (current_pass > vlc_encode_passes) {
++		return;
++	}
++
++	max_b = (current_pass == 2) ? 6 : 30;
++
++	for (b = 0; b < max_b; b++) {
++		dv_vlc_block_t * bl = blocks + b;
++		if (!bl->can_supply) {
++			if (bl->coeffs_start != bl->coeffs_end) {
++				*r_last++ = bl;
++			}
++		} else if (bl->bit_budget) {
++			*s_last++ = bl;
++		}
++	}
++
++	s_ = supplier;
++	r_ = receiver;
++
++	for (; r_ != r_last && s_ != s_last; r_++) {
++		dv_vlc_block_t* r = *r_;
++		for (; s_ != s_last; s_++) {
++			dv_vlc_block_t * s = *s_;
++			while (r->coeffs_start != r->coeffs_end && 
++			       s->bit_budget >= 
++			       get_dv_vlc_len(*r->coeffs_start)) {
++				unsigned long val;
++				long len;
++				val = get_dv_vlc_val(*r->coeffs_start);
++				len = get_dv_vlc_len(*r->coeffs_start);
++				s->bit_offset = put_bits(vsbuffer, 
++							 s->bit_offset,
++							 len, val);
++				r->coeffs_start++;
++				s->bit_budget -= len;
++			}
++			
++			if (r->coeffs_start == r->coeffs_end) {
++				break;
++			}
++			if (s->bit_budget) {
++				vlc_split_code(r, s, vsbuffer);
++			}
++		}
++	}
++
++	return;
++}
++
++inline int classify(dv_coeff_t * bl)
++{
++	int rval = 0;
++
++	dv_coeff_t* p = bl + 1;
++	dv_coeff_t* p_end = p + 64;
++
++	while (p != p_end) {
++		int a = *p++;
++		int b = (a >> 15);
++		a ^= b;
++		a -= b;
++		if (rval < a) {
++			rval = a;
++		}
++	}
++
++	if (rval > 35) {
++		rval = 3;
++	} else if (rval > 23) {
++		rval = 2;
++	} else if (rval > 11) {
++		rval = 1;
++	} else {
++		rval = 0;
++	}
++
++	return rval;
++}
++
++static void do_dct(dv_macroblock_t *mb)
++{
++	guint b;
++
++	for (b = 0; b < 6; b++) {
++		dv_block_t *bl = &mb->b[b];
++		
++		if (bl->dct_mode == DV_DCT_88) {
++			dct_88(bl->coeffs);
++			reorder_block(bl);
++		} else {
++			dct_248(bl->coeffs);
++			reorder_block(bl);
++		}
++		dct_used[bl->dct_mode]++;
++	}
++}
++
++static int classes[3][4] = {
++	{ 0, 1, 2, 3},
++	{ 1, 2, 3, 3},
++	{ 2, 3, 3, 3}
++};
++
++static int qnos[4][16] = {
++	{ 15,                  8,    6,    4,    2, 0},
++	{ 15,         11, 10,  8,    6,    4,    2, 0},
++	{ 15, 14, 13, 11,      8,    6,    4,    2, 0},
++	{ 15,     13, 12, 10,  8,    6,    4,    2, 0}
++};
++
++static int quant_2_static_table[2][20] = {
++	{1700, 0, 1500, 2, 1000, 4, 900, 6, 750, 8, 650, 10, 550, 12, 512, 13, 0, 15},
++	{1700, 0, 1400, 2, 1200, 4, 1000,6, 800, 8, 650, 10, 550, 12, 512, 13, 0, 15}
++};
++
++static int qnos_class_combi[16][16];
++static int qno_next_hit[4][16];
++
++static void do_classify(dv_macroblock_t * mb, int static_qno)
++{
++	int b;
++	dv_block_t *bl;
++
++	if (static_qno) { /* We want to be fast, so don't waste time! */
++		for (b=0; b < 6; b++) {
++			mb->b[b].class_no = 3;
++		}
++		return;
++	} 
++
++	for (b = 0; b < 4; b++) {
++		bl = &mb->b[b];
++		bl->class_no = classes[0][classify(bl->coeffs)];
++		classes_used[bl->class_no]++;
++	}
++	bl = &mb->b[4];
++	bl->class_no = classes[1][classify(bl->coeffs)];
++	classes_used[bl->class_no]++;
++	bl = &mb->b[5];
++	bl->class_no = classes[2][classify(bl->coeffs)];
++	classes_used[bl->class_no]++;
++	
++}
++
++static void quant_1_pass(dv_videosegment_t* videoseg, 
++			 dv_vlc_block_t * vblocks, int static_qno)
++{
++	dv_macroblock_t *mb;
++	int m;
++	int b;
++
++	dv_coeff_t bb[6][64];
++
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		int smallest_qno = 15;
++		int qno_index;
++		int cycles = 0;
++
++		for (b = 0; b < 6; b++) {
++			dv_block_t *bl = &mb->b[b];
++			guint ac_coeff_budget = (((b < 4) ? 100 : 68) - 4); 
++			qno_index = qno_next_hit[bl->class_no][smallest_qno];
++			while (smallest_qno > 0) {
++				memcpy(bb[b], bl->coeffs, 
++				       64 *sizeof(dv_coeff_t));
++				quant(bb[b], smallest_qno, bl->class_no);
++				if (vlc_num_bits_block(bb[b]) 
++				    <= ac_coeff_budget)
++					break;
++				qno_index++;
++				cycles++;
++				smallest_qno = qnos[bl->class_no][qno_index];
++			}
++			if (smallest_qno == 0) {
++				break;
++			}
++		}
++
++		mb->qno = smallest_qno;
++		cycles_used[cycles]++;
++		qnos_used[smallest_qno]++;
++		if (smallest_qno != 15) { 
++			for (b = 0; b < 6; b++) {
++				dv_block_t *bl = &mb->b[b];
++				quant(bl->coeffs, smallest_qno, bl->class_no);
++				vlc_encode_block(bl->coeffs, vblocks + b);
++			}
++			
++			if (smallest_qno == 0) {
++				for (b = 0; b < 6; b++) {
++					vlc_make_fit(vblocks + b, 1,
++						     ((b < 4) ? 100 : 68));
++				}
++			}
++		} else {
++			for (b = 0; b < 6; b++) {
++				vlc_encode_block(bb[b], vblocks + b);
++			}
++		}
++		vblocks += 6;
++	}
++}
++
++static void quant_2_passes(dv_videosegment_t* videoseg, 
++			   dv_vlc_block_t * vblocks, int static_qno)
++{
++	dv_macroblock_t *mb;
++	int m;
++	dv_coeff_t bb[6][64];
++	const int ac_coeff_budget = 4*100+2*68-6*4;
++
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		int b;
++		int cycles = 0;
++		int bits_used = 0;
++		int qno = 15;
++		int run = 0;
++
++		for (b = 0; b < 6; b++) {
++			int bits;
++			dv_block_t *bl = &mb->b[b];
++			memcpy(bb[b], bl->coeffs, 64 *sizeof(dv_coeff_t));
++			quant(bb[b], qno, bl->class_no);
++			bits = vlc_num_bits_block(bb[b]);
++			bits_used += bits;
++		}
++
++		if (static_qno && bits_used > ac_coeff_budget) {
++			int i = 0;
++			while (bits_used <= 
++			       quant_2_static_table[static_qno-1][i])
++				i += 2;
++			qno = quant_2_static_table[static_qno-1][i+1];
++		} else if (bits_used > ac_coeff_budget) {
++			int qno_ok = 0;
++			int runs = (bits_used - ac_coeff_budget) / 
++				VLC_BITS_ON_FULL_MBLOCK_CYCLE_QUANT_2 + 1;
++			int qno_incr = 8;
++			int i;
++			qno++;
++
++			for (; run < runs 
++				     && run < VLC_MAX_RUNS_PER_CYCLE_QUANT_2;
++			     run++) {
++				qno -= qno_incr;
++				qno_incr >>= 1;
++			}
++			for (i = run; i < 5; i++) {
++				bits_used = 0;
++				for (b = 0; b < 6; b++) {
++					dv_block_t *bl = &mb->b[b];
++					memcpy(bb[b], bl->coeffs, 
++					       64 *sizeof(dv_coeff_t));
++					quant(bb[b], qno, bl->class_no);
++					bits_used += vlc_num_bits_block(bb[b]);
++				}
++
++				if (bits_used > ac_coeff_budget) {
++					qno -= qno_incr;
++				} else {
++					qno_ok = qno;
++					qno += qno_incr;
++				}
++				cycles++;
++				if (qno_incr == 1 && qno < 10) {
++					break;
++				}
++				qno_incr >>= 1;
++			} 
++			qno = qno_ok;
++		}
++
++		mb->qno = qno;
++		runs_used[run]++;
++		cycles_used[cycles]++;
++		qnos_used[qno]++;
++		if (qno != 15) { 
++			for (b = 0; b < 6; b++) {
++				dv_block_t *bl = &mb->b[b];
++				quant(bl->coeffs, qno, bl->class_no);
++				vlc_encode_block(bl->coeffs, vblocks + b);
++			}
++			if (qno == 0 || static_qno) {
++				vlc_make_fit(vblocks, 6, 4*100+2*68);
++			}
++		} else {
++			for (b = 0; b < 6; b++) {
++				vlc_encode_block(bb[b], vblocks + b);
++			}
++		}
++		vblocks += 6;
++	}
++}
++
++static void quant_3_passes(dv_videosegment_t* videoseg, 
++			   dv_vlc_block_t * vblocks, int static_qno)
++{
++	dv_macroblock_t *mb;
++	int m;
++	int b;
++	int smallest_qno[5];
++	int qno_index[5];
++	int class_combi[5];
++	int cycles = 0;
++	dv_coeff_t bb[5][6][64];
++	const int ac_coeff_budget = 5*(4*100+2*68-6*4);
++	int bits_used[5];
++	int bits_used_total;
++	for (m = 0; m < 5; m++) {
++		smallest_qno[m] = 15;
++		qno_index[m] = 0;
++		class_combi[m] = 0;
++	}
++
++	bits_used_total = 0;
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		bits_used[m] = 0;
++		for (b = 0; b < 6; b++) {
++			dv_block_t *bl = &mb->b[b];
++			memcpy(bb[m][b], bl->coeffs, 64 * sizeof(dv_coeff_t));
++			quant(bb[m][b], smallest_qno[m], bl->class_no);
++			bits_used[m] += vlc_num_bits_block(bb[m][b]);
++			class_combi[m] |= (1 << bl->class_no);
++		}
++		while (qnos_class_combi[class_combi[m]][qno_index[m]] > 15) {
++			qno_index[m]++;
++		}
++		bits_used_total += bits_used[m];
++	}
++
++	if (static_qno && bits_used_total > ac_coeff_budget) {
++		for (m = 0; m < 5; m++) {
++			int i = 0;
++			while (bits_used[m] <= 
++			       quant_2_static_table[static_qno-1][i])
++				i += 2;
++			smallest_qno[m] =
++				quant_2_static_table[static_qno-1][i+1];
++			if (smallest_qno[m] < 14) {
++				smallest_qno[m] ++; /* just guessed... */
++			}
++		}
++	} else while (bits_used_total > ac_coeff_budget) {
++		int m_max = 0;
++		int bits_used_ = 0;
++		int runs = (bits_used_total - ac_coeff_budget) / 
++			VLC_BITS_ON_FULL_MBLOCK_CYCLE_QUANT_3 + 1;
++		int run;
++
++		for (m = 1; m < 5; m++) {
++			if (bits_used[m] > bits_used[m_max]) {
++				m_max = m;
++			}
++		}
++		m = m_max;
++		mb = videoseg->mb + m;
++
++		cycles++;
++		
++		for (run = 0; run < runs 
++			     && run < VLC_MAX_RUNS_PER_CYCLE_QUANT_3; 
++		     run++) {
++			qno_index[m]++;
++			smallest_qno[m] = 
++				qnos_class_combi[class_combi[m]][qno_index[m]];
++			if (smallest_qno[m] == 0) {
++				break;
++			}
++		}
++		runs_used[run]++;
++		if (smallest_qno[m] == 0) {
++			break;
++		}
++		
++		for (b = 0; b < 6; b++) {
++			dv_block_t *bl = &mb->b[b];
++			memcpy(bb[m][b], bl->coeffs, 64 *sizeof(dv_coeff_t));
++			quant(bb[m][b], smallest_qno[m], bl->class_no);
++			bits_used_ += vlc_num_bits_block(bb[m][b]);
++		}
++		bits_used_total -= bits_used[m];
++		bits_used_total += bits_used_;
++		bits_used[m] = bits_used_;
++	}
++
++	cycles_used[cycles]++;
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		mb->qno = smallest_qno[m];
++		qnos_used[smallest_qno[m]]++;
++		if (smallest_qno[m] != 15) { 
++			for (b = 0; b < 6; b++) {
++				dv_block_t *bl = &mb->b[b];
++				quant(bl->coeffs,smallest_qno[m],bl->class_no);
++				vlc_encode_block(bl->coeffs,vblocks+6 * m + b);
++			}
++		} else {
++			for (b = 0; b < 6; b++) {
++				vlc_encode_block(bb[m][b], vblocks+6 * m + b);
++			}
++		}
++	}
++	if (bits_used_total > ac_coeff_budget) {
++		vlc_make_fit(vblocks, 30, 5*(4*100+2*68));
++	}
++}
++
++
++// Heroine Virtual
++
++static void fill_macroblock(dv_macroblock_t *mb, 
++	int isPAL, 
++	unsigned char **row_pointers)
++{
++	int y = mb->y;
++	int x = mb->x;
++	dv_block_t* bl = mb->b;
++	int i, j;
++	int force_dct = -1;
++	
++	
++	if (isPAL || mb->x == DV_WIDTH- 16) 
++	{ 
++		for (j = 0; j < 8; j++) 
++		{
++			for (i = 0; i < 8; i++) 
++			{
++				bl[0].coeffs[8 * i + j] = row_pointers[y + j][(x + i) * 2] - 0x80;
++				bl[1].coeffs[8 * i + j] = row_pointers[y + j][(x + 8 + i) * 2] - 0x80;
++				bl[2].coeffs[8 * i + j] = row_pointers[y + 8 + j][(x + i) * 2] - 0x80;
++				bl[3].coeffs[8 * i + j] = row_pointers[y + 8 + j][(x + 8 + i) * 2] - 0x80;
++				bl[4].coeffs[8 * i + j] = row_pointers[y + j][(x + i) / 2 * 4 + 3] - 0x80;
++				bl[5].coeffs[8 * i + j] = row_pointers[y + j][(x + i) / 2 * 4 + 1] - 0x80;
++			}
++		}
++	}
++	else
++	{
++		for (i = 0; i < 8; i++) 
++		{
++			for (j = 0; j < 8; j++) 
++			{
++				bl[0].coeffs[8 * i + j] = row_pointers[y + j][(x + i) * 2] - 0x80;
++				bl[1].coeffs[8 * i + j] = row_pointers[y + j][(x + 8 + i) * 2] - 0x80;
++				bl[2].coeffs[8 * i + j] = row_pointers[y + j][(x + 16 + i) * 2] - 0x80;
++				bl[3].coeffs[8 * i + j] = row_pointers[y + j][(x + 24 + i) * 2] - 0x80;
++				bl[4].coeffs[8 * i + j] = row_pointers[y + j][(x + i) / 2 * 4 + 3] - 0x80;
++				bl[5].coeffs[8 * i + j] = row_pointers[y + j][(x + i) / 2 * 4 + 1] - 0x80;
++			}
++		}
++	}
++
++	if (force_dct != -1) 
++	{
++		int b;
++		for (b = 0; b < 6; b++) 
++		{
++			bl[b].dct_mode = force_dct;
++		}
++	} 
++	else 
++	{
++		int b;
++		for (b = 0; b < 6; b++) 
++		{
++			bl[b].dct_mode = need_dct_248_transposed(bl[b].coeffs) 
++				? DV_DCT_248 : DV_DCT_88;
++		}
++	}
++}
++
++void dv_process_videosegment(unsigned char **row_pointers,
++				 dv_videosegment_t* videoseg,
++				 guint8 * vsbuffer, 
++				 int vlc_encode_passes,
++				 int static_qno)
++{
++	dv_macroblock_t *mb;
++	gint m;
++	guint b;
++	dv_vlc_block_t vlc_block[5*6];
++
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		mb->vlc_error = 0;
++		mb->eob_count = 0;
++		mb->i = (videoseg->i+ dv_super_map_vertical[m]) 
++			% (videoseg->isPAL ? 12 : 10);
++		mb->j = dv_super_map_horizontal[m];
++		mb->k = videoseg->k;
++		
++		if (videoseg->isPAL) {
++			dv_place_420_macroblock(mb);
++		} else {
++			dv_place_411_macroblock(mb);
++		}
++
++		fill_macroblock(mb, videoseg->isPAL, row_pointers);
++
++		do_dct(mb);
++		do_classify(mb, static_qno);
++	}
++
++	for (m = 0; m < 5; m++) {
++		dv_vlc_block_t *v_bl = vlc_block;
++		for (b = 0; b < 6; b++) {
++			v_bl->bit_offset = (8* (80 * m))+dv_parse_bit_start[b];
++			v_bl->bit_budget = (b < 4) ? 100 : 68;
++			v_bl++;
++		}
++	}
++
++	switch (vlc_encode_passes) {
++	case 1:
++		quant_1_pass(videoseg, vlc_block, static_qno);
++		break;
++	case 2:
++		quant_2_passes(videoseg, vlc_block, static_qno);
++		break;
++	case 3:
++		quant_3_passes(videoseg, vlc_block, static_qno);
++		break;
++	default:
++		fprintf(stderr, "Invalid value for vlc_encode_passes "
++			"specified: %d!\n", vlc_encode_passes);
++		exit(-1);
++	}
++		
++	for (m = 0, mb = videoseg->mb; m < 5; m++, mb++) {
++		put_bits(vsbuffer, (8 * (80 * m)) + 28, 4, mb->qno);
++		
++		for (b = 0; b < 6; b++) {
++			dv_block_t *bl = &mb->b[b];
++			dv_vlc_block_t *v_bl = vlc_block + m*6 + b;
++
++			v_bl->bit_offset = (8* (80 * m))+dv_parse_bit_start[b];
++			v_bl->bit_budget = (b < 4) ? 100 : 68;
++
++			put_bits(vsbuffer, v_bl->bit_offset - 12,
++				 12, (bl->coeffs[0] << 3) | (bl->dct_mode << 2)
++				 | bl->class_no);
++			vlc_encode_block_pass_1(v_bl, vsbuffer, 
++						vlc_encode_passes);
++		}
++		vlc_encode_block_pass_n(vlc_block + m * 6, vsbuffer, 
++					vlc_encode_passes, 2);
++	}
++	vlc_encode_block_pass_n(vlc_block, vsbuffer, vlc_encode_passes, 3);
++}
+--- quicktime.orig/Makefile.am	Sat May 11 21:54:53 2002
++++ quicktime/Makefile.am	Sat May 11 23:09:01 2002
+@@ -11,7 +11,7 @@
+ 	mdia.c minf.c moov.c mvhd.c plugin.c qtpng.c quicktime.c raw.c rawaudio.c smhd.c \
+ 	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c \
+ 	twos.c udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c workarounds.c \
+-	yuv2.c yuv4.c yv12.c
++	yuv2.c yuv4.c yv12.c dv_encode.c
+ 
+ libquicktime_la_LDFLAGS = -version-info 1:5:0
+ libquicktime_la_LIBADD = -L/usr/X11R6/lib -lpng -ljpeg -ldv -lraw1394 -lpthread \

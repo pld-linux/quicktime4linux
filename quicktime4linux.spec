@@ -1,23 +1,24 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	1.4
-Release:	3
+Version:	1.5.5
+Release:	0.1
 License:	GPL
 Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
-Source1:	qt4linux-Makefile.am
-Source2:	qt4linux-configure.in
-Patch0:		%{name}-libraw1394.patch
+Patch0:		%{name}-acam.patch
+Patch1:		%{name}-system-libdv.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	glib-devel
 BuildRequires:	libdv-devel >= 0.9
 BuildRequires:	libjpeg-devel
+BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libraw1394-devel
 BuildRequires:	libtool
+BuildRequires:	libvorbis-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -74,19 +75,21 @@ Static quicktime4linux libraries.
 Biblioteki statyczne quicktime4linux.
 
 %prep
-%setup -q
-%patch -p1
-rm -f Makefile global_config configure
-install %{SOURCE1} Makefile.am
-install %{SOURCE2} configure.in
+%setup -q -n quicktime
+%patch0 -p1
+%patch1 -p1
 
 %build
 rm -f missing
 libtoolize --copy --force
 aclocal
+autoheader
 autoconf
 automake -a -c -f
-%configure
+if [ -f %{_pkgconfigdir}/libpng12.pc ] ; then
+	CPPFLAGS="`pkg-config libpng12 --cflags`"
+fi
+%configure CPPFLAGS="$CPPFLAGS"
 
 %{__make}
 
@@ -94,7 +97,7 @@ automake -a -c -f
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-cp codecs.h funcprotos.h colormodels.h graphics.h $RPM_BUILD_ROOT/%{_includedir}/quicktime
+cp -f codecs.h funcprotos.h colormodels.h graphics.h $RPM_BUILD_ROOT%{_includedir}/quicktime
 
 gzip -9nf README
 

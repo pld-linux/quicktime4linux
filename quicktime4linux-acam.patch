@@ -1,0 +1,136 @@
+diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
+--- quicktime.orig/Makefile.am	Thu Jan  1 01:00:00 1970
++++ quicktime/Makefile.am	Sat May 11 21:29:10 2002
+@@ -0,0 +1,46 @@
++ENCORE_DIR = encore50
++DECORE_DIR = decore50
++ENCORE_INCLUDE = $(ENCORE_DIR)/encore.h
++DECORE_INCLUDE = $(DECORE_DIR)/decore.h
++
++SUBDIRS = $(DECORE_DIR) $(ENCORE_DIR)
++lib_LTLIBRARIES = libquicktime.la
++libquicktime_la_SOURCES = atom.c cmodel_default.c cmodel_yuv420p.c cmodel_yuv422.c \
++	codecs.c colormodels.c ctab.c dinf.c divx.c dref.c dv.c edts.c elst.c \
++	graphics.c hdlr.c ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c \
++	mdia.c minf.c moov.c mvhd.c plugin.c qtpng.c quicktime.c raw.c rawaudio.c smhd.c \
++	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c \
++	twos.c udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c workarounds.c \
++	yuv2.c yuv4.c yv12.c
++
++libquicktime_la_LDFLAGS = -version-info 1:5:0
++libquicktime_la_LIBADD = -L/usr/X11R6/lib -lpng -ljpeg -ldv -lraw1394 -lpthread \
++	-logg -lvorbis -lvorbisenc \
++	$(DECORE_DIR)/libdecore.la $(ENCORE_DIR)/libencore.la
++
++includedir = $(prefix)/include/quicktime
++include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h
++
++INCLUDES = $(GLIB_CFLAGS) -I/usr/X11R6/include -I/usr/X11R6/include/libdv \
++	   -I$(DECORE_DIR) -I$(ENCORE_DIR) \
++	   -DDECORE_INCLUDE=\"$(DECORE_INCLUDE)\" -DENCORE_INCLUDE=\"$(ENCORE_INCLUDE)\" \
++	   -DLINUX -D_DECORE -D_REENTRANT \
++	   -DHAVE_FIREWIRE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
++
++bin_PROGRAMS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv qtrecover qtrechunk
++
++qtdump_SOURCES = dump.c
++qtmake_streamable_SOURCES = make_streamable.c
++qtdechunk_SOURCES = dechunk.c
++qtrechunk_SOURCES = rechunk.c
++qtrecover_SOURCES = recover.c
++qtyuv4toyuv_SOURCES = yuv4toyuv.c
++qtinfo_SOURCES = qtinfo.c
++
++qtdump_LDADD = -L. -lquicktime
++qtmake_streamable_LDADD = -L. -lquicktime
++qtdechunk_LDADD = -L. -lquicktime
++qtrechunk_LDADD = -L. -lquicktime
++qtrecover_LDADD = -L. -lquicktime
++qtyuv4toyuv_LDADD = -L. -lquicktime
++qtinfo_LDADD = -L. -lquicktime
+diff -Nur quicktime.orig/configure.in quicktime/configure.in
+--- quicktime.orig/configure.in	Thu Jan  1 01:00:00 1970
++++ quicktime/configure.in	Sat May 11 21:28:27 2002
+@@ -0,0 +1,60 @@
++AC_INIT(quicktime4linux, 1.5.5)
++AM_INIT_AUTOMAKE
++AC_CONFIG_SRCDIR([atom.c])
++AM_CONFIG_HEADER([config.h])
++
++AC_PROG_CC
++AC_PROG_CXX
++AC_PROG_CPP
++AC_PROG_MAKE_SET
++AC_PROG_INSTALL
++AC_PROG_LN_S
++AC_PROG_LIBTOOL
++
++AC_HEADER_DIRENT
++AC_HEADER_STDC
++AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h memory.h stdint.h stdlib.h string.h strings.h sys/time.h])
++
++AC_C_CONST
++AC_C_INLINE
++AC_TYPE_SIZE_T
++AC_HEADER_TIME
++
++AC_FUNC_MALLOC
++AC_FUNC_MEMCMP
++AC_FUNC_STAT
++AC_FUNC_VPRINTF
++AC_CHECK_FUNCS([bzero floor memset pow select sqrt strcasecmp])
++
++AM_PATH_GLIB
++AM_PATH_OGG
++AM_PATH_VORBIS
++
++dnl check for dv library
++dnl    AC_MSG_CHECKING([for dv library])
++dnl    AC_ARG_WITH(dv-includes, [  --with-dv-includes=DIR	dv library includes in DIR],
++dnl        [ ac_dv_includes=$withval ], ac_dv_includes=/usr/include)
++dnl    
++dnl    CFLAGS="-I/usr/X11R6/include/libdv $CFLAGS"
++dnl    
++dnl    AC_CHECK_HEADER(dv.h, dv_includes=/usr/X11R6/include,
++dnl        AC_CHECK_HEADER(libdv/dv.h,
++dnl          dv_includes=/usr/X11R6/include/libdv,
++dnl          AC_MSG_ERROR([*** dv library headers not installed ***]))
++dnl    )
++dnl    
++dnl    AC_CHECK_LIB(dv, main,, AC_MSG_ERROR([*** dv support not installed ***]))
++dnl    
++dnl    dnl check for raw1394 library
++dnl    AC_CHECK_HEADER(raw1394.h, raw1394_includes=/usr/include,
++dnl        AC_CHECK_HEADER(libraw1394/raw1394.h,
++dnl          raw1394_includes=/usr/include/libraw1394,
++dnl          AC_MSG_ERROR([*** libraw1394 library headers not installed ***]))
++dnl    )
++dnl    AC_CHECK_LIB(raw1394, main,, AC_MSG_ERROR([*** libraw1394 support not installed ***]))
++
++AC_CONFIG_FILES([Makefile
++                 docs/Makefile
++		 decore50/Makefile
++		 encore50/Makefile])
++AC_OUTPUT
+diff -Nur quicktime.orig/decore50/Makefile.am quicktime/decore50/Makefile.am
+--- quicktime.orig/decore50/Makefile.am	Thu Jan  1 01:00:00 1970
++++ quicktime/decore50/Makefile.am	Sat May 11 20:12:38 2002
+@@ -0,0 +1,9 @@
++noinst_LTLIBRARIES = libdecore.la
++
++libdecore_la_SOURCES = debug.c basic_prediction.c clearblock.c decore.c getbits.c idct.c \
++	mp4_vars.c mp4_block.c mp4_decoder.c mp4_header.c mp4_iquant.c mp4_mblock.c \
++	mp4_picture.c mp4_predict.c mp4_recon.c mp4_tables.c mp4_vld.c postprocess.c \
++	yuv2rgb.c transferidct.c
++
++INCLUDES = -DLINUX -D_DECORE -D_REENTRANT \
++	   -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+diff -Nur quicktime.orig/encore50/Makefile.am quicktime/encore50/Makefile.am
+--- quicktime.orig/encore50/Makefile.am	Thu Jan  1 01:00:00 1970
++++ quicktime/encore50/Makefile.am	Sat May 11 20:15:59 2002
+@@ -0,0 +1,5 @@
++noinst_LTLIBRARIES = libencore.la
++
++libencore_la_SOURCES = bitstream.c encore.c mom_access.c mom_util.c mot_code.c \
++	mot_est_comp.c mot_est_mb.c mot_util.c putvlc.c rate_ctl.c text_bits.c \
++	text_code.c text_code_mb.c text_dct.c vop_code.c
