@@ -1,25 +1,29 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	1.5.5
-Release:	4
+Version:	1.6.1
+Release:	1
 License:	GPL
 Group:		Libraries
-Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
-Patch2:		%{name}-libogg_libvorbis_1.0_ac_fix.patch
+Patch2:		%{name}-ffmpeg.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	ffmpeg-devel >= 0.4.6
 BuildRequires:	glib-devel
+BuildRequires:	lame-libs-devel
 BuildRequires:	libdv-devel >= 0.99
 BuildRequires:	libjpeg-devel
+BuildRequires:	libmpeg3-devel >= 1.5.0
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libraw1394-devel
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.0
+BuildRequires:	pkgconfig >= 0.9.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -76,13 +80,13 @@ Static quicktime4linux libraries.
 Biblioteki statyczne quicktime4linux.
 
 %prep
-%setup -q -n quicktime
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
 %build
-rm -rf missing libdv jpeg
+rm -rf missing ffmpeg* jpeg jpeg-mmx* lame* libdv-* libogg-* libraw1394* libvorbis-*
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}
@@ -96,7 +100,6 @@ rm -rf missing libdv jpeg
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
-cp -f codecs.h funcprotos.h colormodels.h graphics.h $RPM_BUILD_ROOT%{_includedir}/quicktime
 
 %clean
 rm -rf $RPM_BUILD_ROOT

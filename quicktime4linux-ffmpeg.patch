@@ -1,0 +1,20 @@
+--- quicktime4linux-1.6.1/div3.c.orig	Sat Nov 23 06:33:37 2002
++++ quicktime4linux-1.6.1/div3.c	Thu Feb 27 21:51:31 2003
+@@ -422,7 +422,7 @@
+ 		codec->encoder_context.pix_fmt = PIX_FMT_YUV420P;
+ 		codec->encoder_context.bit_rate = codec->bitrate;
+ 		codec->encoder_context.bit_rate_tolerance = codec->bitrate_tolerance;
+-		codec->encoder_context.quality = codec->quantizer;
++	/*	codec->encoder_context.quality = codec->quantizer; */
+ 		codec->encoder_context.rc_eq = video_rc_eq;
+ 		codec->encoder_context.qmin = 2;
+ 		codec->encoder_context.qmax = 31;
+@@ -524,7 +524,7 @@
+ 					&chunk_atom, 
+ 					1);
+ //printf(__FUNCTION__ " 1\n");
+-	if(codec->encoder_context.key_frame)
++	if(codec->encoder_context.coded_frame && codec->encoder_context.coded_frame->key_frame)
+ 		quicktime_insert_keyframe(file, 
+ 			vtrack->current_position, 
+ 			track);
