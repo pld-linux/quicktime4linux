@@ -84,8 +84,8 @@ Biblioteki statyczne quicktime4linux.
 %build
 rm -f missing
 %{__libtoolize}
-aclocal
-autoheader
+%{__aclocal}
+%{__autoheader}
 %{__autoconf}
 %{__automake}
 if [ -f %{_pkgconfigdir}/libpng12.pc ] ; then
