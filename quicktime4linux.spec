@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	1.5.5
-Release:	3
+Release:	4
 License:	GPL
 Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
@@ -117,6 +117,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc docs/*.html
 %attr(755,root,root) %{_libdir}/lib*.so
+%{_libdir}/lib*.la
 %{_includedir}/quicktime
 
 %files static
