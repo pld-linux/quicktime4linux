@@ -9,12 +9,8 @@ libquicktime_la_SOURCES = atom.c codecs.c colormodels.c ctab.c dinf.c dref.c dv.
 libquicktime_la_LDFLAGS = -version-info 1:3:0
 libquicktime_la_LIBADD = -L/usr/X11R6/lib -lpng -ljpeg -ldv -lraw1394 -lpthread
 
-qtheaders = quicktime.h private.h codecs.h
-
-install-data-local:
-	$(INSTALL) -d $(DESTDIR)$(includedir)/quicktime
-	cd $(srcdir) ; cp  $(qtheaders) $(DESTDIR)$(includedir)/quicktime
-
+includedir = $(prefix)/include/quicktime
+include_HEADERS = quicktime.h private.h codecs.h
 
 INCLUDES = $(GLIB_CFLAGS) -I/usr/X11R6/include -I/usr/X11R6/include/libdv -Ilibdv -DUSE_FIREWIRE
 
