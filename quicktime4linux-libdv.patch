@@ -1,0 +1,81 @@
+diff -Nur quicktime4linux-1.3.orig/dv.c quicktime4linux-1.3/dv.c
+--- quicktime4linux-1.3.orig/dv.c	Thu Jan 25 02:13:14 2001
++++ quicktime4linux-1.3/dv.c	Tue Jun 26 15:31:29 2001
+@@ -7,7 +7,11 @@
+ {
+ 	quicktime_dv_codec_t *codec = ((quicktime_codec_t*)vtrack->codec)->priv;
+ 
+-	if(codec->dv) dv_delete(codec->dv);
++	if(codec->dv) { /* no *_delete functions in libdv 0.5 */
++		free(codec->dv->audio);
++		free(codec->dv->video);
++		free(codec->dv);
++	}
+ 	free(codec->temp_frame);
+ 	free(codec->data);
+ 	free(codec);
+@@ -22,6 +26,7 @@
+ 	int width = vtrack->track->tkhd.track_width;
+ 	int height = vtrack->track->tkhd.track_height;
+ 	int result = 0;
++	dv_color_space_t color_space = e_dv_color_rgb;
+ 
+ 	quicktime_set_video_position(file, vtrack->current_position, track);
+ 	bytes = quicktime_frame_size(file, vtrack->current_position, track);
+@@ -29,14 +34,17 @@
+ 
+ 	if(codec->dv)
+ 	{
++		dv_parse_header(codec->dv, codec->data);
+ 		if(width == 720 && height == 480)
+ 		{
+-			dv_read_video(codec->dv, row_pointers, codec->data, bytes, file->color_model);
++			unsigned short pitches=width*3;
++			dv_decode_full_frame(codec->dv, codec->data, color_space, row_pointers, &pitches);
+ 		}
+ 		else
+ 		{
+ 			register int x, y;
+-			dv_read_video(codec->dv, codec->temp_rows, codec->data, bytes, file->color_model);
++			unsigned short pitches=width*3;
++			dv_decode_full_frame(codec->dv, codec->data, color_space, codec->temp_rows, &pitches);
+ 
+ 			for(y = 0; y < height; y++)
+ 			{
+@@ -63,8 +71,7 @@
+ 		int colormodel, 
+ 		int track)
+ {
+-	return (colormodel == BC_RGB888 ||
+-		colormodel == BC_YUV888);
++	return (colormodel == BC_RGB888);
+ }
+ 
+ void quicktime_init_codec_dv(quicktime_video_map_t *vtrack)
+@@ -83,7 +90,8 @@
+ 
+ /* Init private items */
+ 	codec = ((quicktime_codec_t*)vtrack->codec)->priv;
+-	codec->dv = dv_new();
++	dv_init();
++	codec->dv = dv_decoder_new();
+ 	codec->temp_frame = calloc(1, 720 * 576 * 3);
+ 	codec->data = calloc(1, 140000);
+ 	for(i = 0; i < 576; i++) codec->temp_rows[i] = codec->temp_frame + 720 * 3 * i;
+diff -Nur quicktime4linux-1.3.orig/dv.h quicktime4linux-1.3/dv.h
+--- quicktime4linux-1.3.orig/dv.h	Thu Jan 25 02:13:14 2001
++++ quicktime4linux-1.3/dv.h	Tue Jun 26 15:32:50 2001
+@@ -1,11 +1,11 @@
+ #ifndef QUICKTIME_DV_H
+ #define QUICKTIME_DV_H
+ 
+-#include "libdv.h"
++#include <libdv/dv.h>
+ 
+ typedef struct
+ {
+-	dv_t *dv;
++	dv_decoder_t *dv;
+ 	unsigned char *data;
+ 	unsigned char *temp_frame, *temp_rows[576];
+ } quicktime_dv_codec_t;

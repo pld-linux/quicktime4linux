@@ -1,0 +1,14 @@
+--- quicktime4linux-1.4/libdv.c.orig	Fri Aug 10 20:14:10 2001
++++ quicktime4linux-1.4/libdv.c	Sat Aug 11 14:12:11 2001
+@@ -206,9 +206,9 @@
+ 	int numcards;
+     struct raw1394_portinfo pinf[16];
+ 
+-    if(!(*handle = raw1394_get_handle()))
++    if(!(*handle = raw1394_new_handle()))
+ 	{
+-        perror("raw1394_get_handle");
++        perror("raw1394_new_handle");
+         return 1;
+     }
+ 
