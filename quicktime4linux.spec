@@ -78,7 +78,7 @@ autoconf
 LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--program-transform-name="s/^qt// ; s/^/qt/"
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
