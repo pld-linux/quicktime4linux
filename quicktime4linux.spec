@@ -17,14 +17,14 @@ Source1:	qt4linux-Makefile.am
 Source2:	qt4linux-configure.in
 Patch0:		%{name}-libraw1394.patch
 URL:		http://heroinewarrior.com/quicktime.php3
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	glib-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libjpeg-devel
 BuildRequires:	libdv-devel >= 0.9
 BuildRequires:	libraw1394-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_prefix		/usr/X11R6
 
 %description
 Quicktime4linux is a library for reading and writing Quicktime files
@@ -50,6 +50,11 @@ Group(pt_BR):	Desenvolvimento/Bibliotecas
 Group(ru):	Разработка/Библиотеки
 Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
+Requires:	glib-devel
+Requires:	libpng-devel >= 1.0.8
+Requires:	libjpeg-devel
+Requires:	libdv-devel
+Requires:	libraw1394-devel
 
 %description devel
 Header files and development documentation for quicktime4linux.
@@ -99,9 +104,10 @@ install %{SOURCE1} Makefile.am
 install %{SOURCE2} configure.in
 
 %build
+rm -f missing
 aclocal
-automake -a -c
 autoconf
+automake -a -c
 %configure
 
 %{__make}
@@ -132,8 +138,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc docs/*.html
 %attr(755,root,root) %{_libdir}/lib*.so
-%dir %{_includedir}/quicktime
-%{_includedir}/quicktime/*.h
+%{_includedir}/quicktime
 
 %files static
 %defattr(644,root,root,755)
