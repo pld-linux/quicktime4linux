@@ -4,19 +4,20 @@ Version:	1.1.9
 Release:	1
 License:	GPL
 Group:		Libraries
+Group(fr):	Librairies
 Group(pl):	Biblioteki
-Source:		http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
-Patch:		quicktime4linux-automake.patch
+Source0:	http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
+Patch0:		quicktime4linux-automake.patch
 URL:		http://heroine.linuxbox.com/quicktime.html
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Quicktime4linux is a library for reading and writing Quicktime files on UNIX
-systems. Supported by this library video is MJPA, JPEG Photo, PNG, RGB, YUV
-4:2:2, and YUV 4:2:0 compression and supported audio is IMA4, ulaw, and any
-linear PCM format.
+Quicktime4linux is a library for reading and writing Quicktime files on
+UNIX systems. Supported by this library video is MJPA, JPEG Photo, PNG,
+RGB, YUV 4:2:2, and YUV 4:2:0 compression and supported audio is IMA4,
+ulaw, and any linear PCM format.
 
 %description -l pl
 Quicktime4linux jest bibliotek± do odczytywania i zapisu plików Quicktime
@@ -28,6 +29,7 @@ nastepuj±ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV 4:2:2 i YUV
 Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
+Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name} = %{version}
 
@@ -54,6 +56,7 @@ Po¿yteczne narzêdzia od operowania na plikach quicktime.
 Summary:	Static quicktime4linux libraries
 Summary(pl):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
+Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
 
@@ -61,7 +64,7 @@ Requires:	%{name}-devel = %{version}
 Static quicktime4linux libraries.
 
 %description -l pl static
-Biblioteki statyczne quicktime4linux. 
+Biblioteki statyczne quicktime4linux.
 
 %prep
 %setup -q
@@ -84,7 +87,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 strip --strip-unneeded $RPM_BUILD_ROOT%{_libdir}/lib*.so.*.*
 
-#gzip -9nf AUTHORS README NEWS 
+gzip -9nf AUTHORS README NEWS 
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -97,7 +100,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
 %files progs
-%defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
 
 %files devel
@@ -109,5 +111,3 @@ rm -rf $RPM_BUILD_ROOT
 
 %files static
 %attr(644,root,root) %{_libdir}/lib*.a
-
-%changelog
