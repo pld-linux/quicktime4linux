@@ -1,9 +1,11 @@
-Summary:	quicktime for Linux
+Summary:	Quicktime for Linux
+Summary(pl):	Obs³uga formatu Quicktime dla Linuxa
 Name:		quicktime4linux
 Version:	1.2
 Release:	1
 License:	GPL
 Group:		Libraries
+Group(de):	Libraries
 Group(fr):	Librairies
 Group(pl):	Biblioteki
 URL:		http://heroine.linuxave.net/quicktime.html
@@ -25,15 +27,16 @@ PNG, RGB, YUV 4:2:2, and YUV 4:2:0 compression and supported audio is
 IMA4, ulaw, and any linear PCM format.
 
 %description -l pl
-Quicktime4linux jest bibliotek± do odczytywania i zapisu plików
-Quicktime przeznaczona dla systemów Unix. Obecnie biblioteka wspiera
-nastêpuj±ce nastepuj±ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV
-4:2:2 i YUV 4:2:0, a tak¿e audio IMA4, ulaw i liniowy format PCM.
+Quicktime4linux jest bibliotek± do odczytywania i zapisu plików w
+formacie Quicktime przeznaczon± dla systemów Unix. Obecnie wspiera ona
+nastêpuj±ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV 4:2:2 oraz
+YUV 4:2:0, a tak¿e audio IMA4, ulaw i liniowy format PCM.
 
 %package devel
 Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name} = %{version}
@@ -45,22 +48,24 @@ Header files and development documentation for quicktime4linux.
 Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
 
 %package progs
-Summary:	Useful tools to operate at quicktime files
-Summary(pl):	Po¿yteczne narzêdzia od operowania na plikach quicktime
+Summary:	Useful tools to operate at Quicktime files
+Summary(pl):	Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Graphics
+Group(de):	Applikationen/Grafik
 Group(pl):	Aplikacje/Grafika
 Requires:	%{name} = %{version}
 
 %description progs
-Useful tools to operate at quicktime files.
+Useful tools to operate at Quicktime files.
 
 %description -l pl progs
-Po¿yteczne narzêdzia od operowania na plikach quicktime.
+Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 
 %package static
 Summary:	Static quicktime4linux libraries
 Summary(pl):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
+Group(de):	Entwicklung/Libraries
 Group(fr):	Development/Librairies
 Group(pl):	Programowanie/Biblioteki
 Requires:	%{name}-devel = %{version}
