@@ -1,7 +1,7 @@
-diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
---- quicktime4linux-1.2.orig/Makefile	Sun Nov 19 03:29:43 2000
-+++ quicktime4linux-1.2/Makefile	Sun Nov 19 03:38:41 2000
-@@ -216,11 +216,27 @@
+diff -Nur quicktime4linux-1.3.orig/Makefile quicktime4linux-1.3/Makefile
+--- quicktime4linux-1.3.orig/Makefile	Thu Feb 15 15:25:34 2001
++++ quicktime4linux-1.3/Makefile	Thu Feb 15 15:25:16 2001
+@@ -220,11 +220,27 @@
  	libdv/weighting_pic.o \
  	libdv/ycrcb_to_rgb32_pic.o
  
@@ -21,7 +21,7 @@ diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
  
 +INSTALL_RHEADERS = libraw1394/raw1394.h
 +
-+UTILS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv
++UTILS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv qtrecover
  OUTPUT = libquicktime.a
  OUTPUT_SHARED = libquicktime.so.1.2.0
  
@@ -30,7 +30,7 @@ diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
  
  $(OUTPUT): $(OBJS)
  	$(MAKE) -C jpeg
-@@ -238,20 +254,18 @@
+@@ -242,23 +258,21 @@
  qtdump: dump.o $(OUTPUT_SHARED)
  	$(CC) -o qtdump dump.o -L. -lquicktime
  
@@ -44,6 +44,11 @@ diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
 +qtdechunk: dechunk.o $(OUTPUT_SHARED)
 +	$(CC) -o qtdechunk dechunk.o -L. -lquicktime
  
+-recover: recover.o $(OUTPUT_SHARED)
+-	$(CC) -o recover recover.o -L. -lquicktime
++qtrecover: recover.o $(OUTPUT_SHARED)
++	$(CC) -o qtrecover recover.o -L. -lquicktime
+ 
 -yuv4toyuv: yuv4toyuv.o $(OUTPUT_SHARED)
 -	$(CC) -o yuv4toyuv yuv4toyuv.o -L. -lquicktime
 +qtyuv4toyuv: yuv4toyuv.o $(OUTPUT_SHARED)
@@ -52,12 +57,12 @@ diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
  qtinfo: qtinfo.o $(OUTPUT_SHARED)
  	$(CC) -o qtinfo qtinfo.o -L. -lquicktime
  
--util:  qtdump make_streamable qtinfo dechunk yuv4toyuv
+-util:  qtdump make_streamable qtinfo dechunk yuv4toyuv recover
 -	
  
  quicktime.o: quicktime.h  quicktime.c
  
-@@ -260,6 +274,20 @@
+@@ -267,6 +281,20 @@
  
  %_pic.o: %.c
  	$(CC) -fPIC $(CFLAGS) -c $< -o $@
