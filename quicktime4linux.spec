@@ -45,7 +45,7 @@ Requires:	libraw1394-devel
 %description devel
 Header files and development documentation for quicktime4linux.
 
-%description -l pl devel
+%description devel -l pl
 Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
 
 %package progs
@@ -57,7 +57,7 @@ Requires:	%{name} = %{version}
 %description progs
 Useful tools to operate at Quicktime files.
 
-%description -l pl progs
+%description progs -l pl
 Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 
 %package static
@@ -69,7 +69,7 @@ Requires:	%{name}-devel = %{version}
 %description static
 Static quicktime4linux libraries.
 
-%description -l pl static
+%description static -l pl
 Biblioteki statyczne quicktime4linux.
 
 %prep
