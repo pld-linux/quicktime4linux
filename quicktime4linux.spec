@@ -6,6 +6,7 @@ Release:	1
 License:	GPL
 Group:		Libraries
 Group(de):	Libraries
+Group(es):	Bibliotecas
 Group(fr):	Librairies
 Group(pl):	Biblioteki
 URL:		http://heroine.linuxave.net/quicktime.html
@@ -90,7 +91,7 @@ automake -a -c
 autoconf
 %configure
 
-%{__make} CFLAGS="$RPM_OPT_FLAGS"
+%{__make} CFLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
