@@ -1,7 +1,7 @@
 Summary:	quicktime for Linux
 Name:		quicktime4linux
 Version:	1.1.9
-Release:	1
+Release: 2
 License:	GPL
 Group:		Libraries
 Group(fr):	Librairies
@@ -10,7 +10,7 @@ Source0:	http://heroine.linuxbox.com/%{name}-%{version}.tar.gz
 Patch0:		quicktime4linux-automake.patch
 URL:		http://heroine.linuxbox.com/quicktime.html
 BuildRequires:	libjpeg-devel
-BuildRequires:	libpng-devel
+BuildRequires:	libpng >= 1.0.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
