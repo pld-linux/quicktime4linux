@@ -16,7 +16,7 @@ diff -uNr quicktime.orig/jpeg_old.h quicktime/jpeg_old.h
 diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
 --- quicktime.orig/libdv.h	Mon Dec  3 14:48:32 2001
 +++ quicktime/libdv.h	Fri Nov  8 19:02:43 2002
-@@ -17,12 +17,12 @@
+@@ -17,7 +17,7 @@
  #define u_int64_t unsigned long long
  #endif
  
@@ -25,12 +25,6 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
  #include <pthread.h>
  #include <sys/time.h>
  
- #ifdef HAVE_FIREWIRE
--#include "libraw1394/src/raw1394.h"
-+#include <libraw1394/raw1394.h>
- 
- typedef struct
- {
 diff -uNr quicktime.orig/libmjpeg.h quicktime/libmjpeg.h
 --- quicktime.orig/libmjpeg.h	Wed Nov 28 16:03:55 2001
 +++ quicktime/libmjpeg.h	Fri Nov  8 19:02:43 2002

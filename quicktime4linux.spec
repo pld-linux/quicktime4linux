@@ -1,14 +1,15 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	1.6.2
+Version:	2.0.0
 Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	bcb007e083e6762d828cc20e1b8d42ef
+# Source0-md5:	14f32cf887f50f8d1dc9dbbc72a1c206
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
+Patch2:		%{name}-broken.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -20,7 +21,6 @@ BuildRequires:	libjpeg-devel
 BuildRequires:	libmpeg3-devel >= 1.5.0-2
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
-BuildRequires:	libraw1394-devel
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.0
 BuildRequires:	pkgconfig >= 0.9.0
@@ -51,7 +51,6 @@ Requires:	libjpeg-devel
 Requires:	libmpeg3-devel >= 1.5.0-2
 Requires:	libogg-devel
 Requires:	libpng-devel >= 1.0.8
-Requires:	libraw1394-devel
 Requires:	libvorbis-devel >= 1:1.0
 
 %description devel
@@ -88,9 +87,10 @@ Biblioteki statyczne quicktime4linux.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
-rm -rf missing ffmpeg* jpeg jpeg-mmx* lame* libdv-* libogg-* libraw1394* libvorbis-*
+rm -rf ffmpeg-* jpeg jpeg-mmx-* lame-* libdv-* libogg-* libvorbis-*
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}

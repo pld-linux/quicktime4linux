@@ -1,0 +1,84 @@
+--- quicktime4linux-2.0.0/trak.c.orig	2003-07-20 11:43:02.000000000 +0200
++++ quicktime4linux-2.0.0/trak.c	2003-08-16 11:24:06.627082216 +0200
+@@ -536,31 +536,31 @@
+ }
+ 
+ 
+-/*
+- * int quicktime_update_tables(quicktime_t *file, 
+- * 							quicktime_trak_t *trak, 
+- * 							int64_t offset, 
+- * 							int64_t chunk, 
+- * 							int64_t sample, 
+- * 							int64_t samples, 
+- * 							int64_t sample_size)
+- * {
+- * //if(file->use_avi)
++/* this function is still used! */
++int quicktime_update_tables(quicktime_t *file, 
++ 							quicktime_trak_t *trak, 
++ 							int64_t offset, 
++ 							int64_t chunk, 
++ 							int64_t sample, 
++ 							int64_t samples, 
++ 							int64_t sample_size)
++{
++/* //if(file->use_avi)
+  * printf("quicktime_update_tables: replaced by quicktime_write_chunk_header and quicktime_write_chunk_footer\n");
+- * 
+- * 	if(offset + sample_size > file->mdat.atom.size) 
+- * 		file->mdat.atom.size = offset + sample_size;
+- * 
+- * 	quicktime_update_stco(&(trak->mdia.minf.stbl.stco), chunk, offset);
+- * 
+- * 	if(trak->mdia.minf.is_video)
+- * 		quicktime_update_stsz(&(trak->mdia.minf.stbl.stsz), sample, sample_size);
+- * 
+- * 
+- * 	quicktime_update_stsc(&(trak->mdia.minf.stbl.stsc), chunk, samples);
+- * 	return 0;
+- * }
+  */
++ 	if(offset + sample_size > file->mdat.atom.size) 
++ 		file->mdat.atom.size = offset + sample_size;
++ 
++ 	quicktime_update_stco(&(trak->mdia.minf.stbl.stco), chunk, offset);
++ 
++ 	if(trak->mdia.minf.is_video)
++ 		quicktime_update_stsz(&(trak->mdia.minf.stbl.stsz), sample, sample_size);
++ 
++ 
++ 	quicktime_update_stsc(&(trak->mdia.minf.stbl.stsc), chunk, samples);
++ 	return 0;
++}
++
+ 
+ int quicktime_trak_duration(quicktime_trak_t *trak, 
+ 	long *duration, 
+--- quicktime4linux-2.0.0/funcprotos.h.orig	2003-07-28 02:46:11.000000000 +0200
++++ quicktime4linux-2.0.0/funcprotos.h	2003-08-16 11:24:36.522537416 +0200
+@@ -287,15 +287,15 @@
+ 	int samples);
+ /* update all the tables after writing a buffer */
+ /* set sample_size to 0 if no sample size should be set */
+-/*
+- * int quicktime_update_tables(quicktime_t *file, 
+- * 							quicktime_trak_t *trak, 
+- * 							int64_t offset, 
+- * 							int64_t chunk, 
+- * 							int64_t sample, 
+- * 							int64_t samples, 
+- * 							int64_t sample_size);
+- */
++/* deprecated - but still used! */
++int quicktime_update_tables(quicktime_t *file, 
++ 							quicktime_trak_t *trak, 
++ 							int64_t offset, 
++ 							int64_t chunk, 
++ 							int64_t sample, 
++ 							int64_t samples, 
++ 							int64_t sample_size);
++
+ void quicktime_update_stco(quicktime_stco_t *stco, long chunk, int64_t offset);
+ void quicktime_update_stsz(quicktime_stsz_t *stsz, long sample, long sample_size);
+ int quicktime_update_stsc(quicktime_stsc_t *stsc, long chunk, long samples);

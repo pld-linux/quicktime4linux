@@ -9,25 +9,25 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +
 +SUBDIRS = $(DECORE_DIR) $(ENCORE_DIR)
 +lib_LTLIBRARIES = libquicktime.la
-+libquicktime_la_SOURCES = atom.c avi_hdrl.c avi_idx1.c avi_movi.c avi_strh.c \
-+	cmodel_default.c cmodel_yuv420p.c cmodel_yuv422.c \
-+	codecs.c colormodels.c ctab.c dinf.c div3.c divx.c dref.c dv.c edts.c elst.c \
-+	graphics.c hdlr.c ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c \
-+	mdia.c minf.c moov.c mvhd.c plugin.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c smhd.c \
-+	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c \
-+	twos.c udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c wmx2.c workarounds.c \
++libquicktime_la_SOURCES = atom.c avi_hdrl.c avi_ix.c avi_idx1.c avi_indx.c avi_movi.c \
++	avi_odml.c avi_riff.c avi_strl.c cmodel_default.c cmodel_yuv420p.c cmodel_yuv422.c \
++	codecs.c colormodels.c ctab.c dinf.c dref.c dv.c edts.c elst.c graphics.c hdlr.c \
++	ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c mdia.c minf.c \
++	moov.c mpeg4.c mvhd.c plugin.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c smhd.c \
++	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c twos.c \
++	udta.c ulaw.c util.c v308.c v408.c v410.c vmhd.c vorbis.c wma.c wmx2.c workarounds.c \
 +	yuv2.c yuv4.c yv12.c
 +
-+libquicktime_la_LDFLAGS = -version-info 1:6:0
++libquicktime_la_LDFLAGS = -version-info 2:0:1
 +libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame \
-+	$(LIBDV_LIBS) $(LIBRAW1394_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
++	$(LIBDV_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
 +	$(DECORE_DIR)/libdecore.la $(ENCORE_DIR)/libencore.la -ldl -lpthread
 +
 +includedir = $(prefix)/include/quicktime
 +include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h \
 +	libdv.h libmjpeg.h jpeg_old.h jpeg.h
 +
-+INCLUDES = $(GLIB_CFLAGS) $(LIBDV_CFLAGS) $(LIBRAW1394_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
++INCLUDES = $(GLIB_CFLAGS) $(LIBDV_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
 +	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/ffmpeg \
 +	   -I$(DECORE_DIR) -I$(ENCORE_DIR) \
 +	   -DDECORE_INCLUDE=\"$(DECORE_INCLUDE)\" -DENCORE_INCLUDE=\"$(ENCORE_INCLUDE)\" \
@@ -44,7 +44,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +qtyuv4toyuv_SOURCES = yuv4toyuv.c
 +qtinfo_SOURCES = qtinfo.c
 +
-+qtdump_LDADD = -L. -lquicktime
++qtdump_LDADD = libquicktime.la
 +qtmake_streamable_LDADD = libquicktime.la
 +qtdechunk_LDADD = libquicktime.la
 +qtrechunk_LDADD = libquicktime.la
@@ -54,7 +54,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 diff -Nur quicktime.orig/configure.in quicktime/configure.in
 --- quicktime.orig/configure.in	Thu Jan  1 01:00:00 1970
 +++ quicktime/configure.in	Sat May 11 21:28:27 2002
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,39 @@
 +AC_INIT(quicktime4linux, 1.6.2)
 +AM_INIT_AUTOMAKE
 +AC_CONFIG_SRCDIR([atom.c])
@@ -88,7 +88,6 @@ diff -Nur quicktime.orig/configure.in quicktime/configure.in
 +XIPH_PATH_VORBIS
 +
 +PKG_CHECK_MODULES(LIBDV, libdv >= 0.99)
-+AC_LIB_RAW1394_FLAGS
 +
 +AC_CONFIG_FILES([Makefile
 +                 docs/Makefile
@@ -101,10 +100,10 @@ diff -Nur quicktime.orig/decore50/Makefile.am quicktime/decore50/Makefile.am
 @@ -0,0 +1,9 @@
 +noinst_LTLIBRARIES = libdecore.la
 +
-+libdecore_la_SOURCES = debug.c basic_prediction.c clearblock.c decore.c getbits.c idct.c \
-+	mp4_vars.c mp4_block.c mp4_decoder.c mp4_header.c mp4_iquant.c mp4_mblock.c \
-+	mp4_picture.c mp4_predict.c mp4_recon.c mp4_tables.c mp4_vld.c postprocess.c \
-+	yuv2rgb.c transferidct.c
++libdecore_la_SOURCES = debug.c decore.c getbits.c mp4_vars.c mp4_block.c \
++	mp4_decoder.c mp4_header.c mp4_iquant.c mp4_mblock.c mp4_picture.c \
++	mp4_predict.c mp4_recon.c mp4_tables.c mp4_vld.c \
++	basic_prediction.c clearblock.c idct.c postprocess.c transferidct.c yuv2rgb.c
 +
 +INCLUDES = -DLINUX -D_DECORE -D_REENTRANT \
 +	   -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
