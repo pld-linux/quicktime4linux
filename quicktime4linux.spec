@@ -54,7 +54,7 @@ Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
 %package progs
 Summary:	Useful tools to operate at Quicktime files
 Summary(pl):	Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime
-Group:		Applications/Graphics
+Group:		Applications/Multimedia
 Requires:	%{name} = %{version}
 
 %description progs
