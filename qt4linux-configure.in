@@ -1,0 +1,37 @@
+AC_INIT(quicktime.c)
+AM_INIT_AUTOMAKE(quicktime, 1.3)
+
+AC_PROG_CC
+AC_PROG_CXX
+AC_PROG_CPP
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
+
+AM_PROG_LIBTOOL
+
+AM_PATH_GLIB
+
+dnl check for dv library
+dnl    AC_MSG_CHECKING([for dv library])
+dnl    AC_ARG_WITH(dv-includes, [  --with-dv-includes=DIR	dv library includes in DIR],
+dnl        [ ac_dv_includes=$withval ], ac_dv_includes=/usr/include)
+dnl    
+dnl    CFLAGS="-I/usr/X11R6/include/libdv $CFLAGS"
+dnl    
+dnl    AC_CHECK_HEADER(dv.h, dv_includes=/usr/X11R6/include,
+dnl        AC_CHECK_HEADER(libdv/dv.h,
+dnl          dv_includes=/usr/X11R6/include/libdv,
+dnl          AC_MSG_ERROR([*** dv library headers not installed ***]))
+dnl    )
+dnl    
+dnl    AC_CHECK_LIB(dv, main,, AC_MSG_ERROR([*** dv support not installed ***]))
+dnl    
+dnl    dnl check for raw1394 library
+dnl    AC_CHECK_HEADER(raw1394.h, raw1394_includes=/usr/include,
+dnl        AC_CHECK_HEADER(libraw1394/raw1394.h,
+dnl          raw1394_includes=/usr/include/libraw1394,
+dnl          AC_MSG_ERROR([*** libraw1394 library headers not installed ***]))
+dnl    )
+dnl    AC_CHECK_LIB(raw1394, main,, AC_MSG_ERROR([*** libraw1394 support not installed ***]))
+
+AC_OUTPUT([Makefile])
