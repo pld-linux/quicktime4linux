@@ -13,7 +13,7 @@ URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	glib-devel
-BuildRequires:	libdv-devel >= 0.98
+BuildRequires:	libdv-devel >= 0.98-2
 BuildRequires:	libjpeg-devel
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel >= 1.0.8
