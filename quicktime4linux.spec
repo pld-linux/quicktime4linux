@@ -6,7 +6,7 @@ Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	41614c9ad55e652e64a3dbe14f1d6ecc
+# Source0-md5:	cd5699025da93b8f1c0547abdbf2c8a5
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
