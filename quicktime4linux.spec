@@ -2,17 +2,18 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuxa
 Name:		quicktime4linux
 Version:	1.3
-Release:	1
+Release:	2
 License:	GPL
 Group:		Libraries
 Group(de):	Libraries
 Group(es):	Bibliotecas
 Group(fr):	Librairies
 Group(pl):	Biblioteki
-URL:		http://heroine.linuxave.net/quicktime.html
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Source1:	qt4linux-Makefile.am
 Source2:	qt4linux-configure.in
+Patch0:		%{name}-libdv.patch
+URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	glib-devel
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libjpeg-devel
@@ -80,7 +81,8 @@ Biblioteki statyczne quicktime4linux.
 
 %prep
 %setup -q
-rm -rf Makefile global_config configure
+%patch -p1
+rm -rf Makefile global_config configure libdv
 install %{SOURCE1} Makefile.am
 install %{SOURCE2} configure.in
 
@@ -91,14 +93,14 @@ automake -a -c
 autoconf
 %configure
 
-%{__make} CFLAGS="%{rpmcflags}"
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-gzip -9nf README docs/*.html
+gzip -9nf README
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -108,6 +110,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%doc README.gz
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
 %files progs
@@ -116,7 +119,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%doc docs/*.html.gz
+%doc docs/*.html
 %attr(755,root,root) %{_libdir}/lib*.so
 %dir %{_includedir}/quicktime
 %{_includedir}/quicktime/*.h
