@@ -24,6 +24,9 @@ BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.0
 BuildRequires:	pkgconfig >= 0.9.0
+Requires:	ffmpeg >= 0.4.8
+Requires:	libdv >= 0.99
+Requires:	libmpeg3 >= 1.5.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
