@@ -1,0 +1,80 @@
+diff -ur quicktime4linux-1.2.orig/Makefile quicktime4linux-1.2/Makefile
+--- quicktime4linux-1.2.orig/Makefile	Sun Nov 19 03:29:43 2000
++++ quicktime4linux-1.2/Makefile	Sun Nov 19 03:38:41 2000
+@@ -216,11 +216,27 @@
+ 	libdv/weighting_pic.o \
+ 	libdv/ycrcb_to_rgb32_pic.o
+ 
++INSTALL_HEADERS = \
++	funcprotos.h \
++	graphics.h \
++	private.h \
++	quicktime.h \
++	sizes.h \
++	codecs.h
++
++INSTALL_DHEADERS = \
++	libdv/bitstream.h \
++	libdv/dv.h \
++	libdv/dvprivate.h \
++	libdv/libdv.h
+ 
++INSTALL_RHEADERS = libraw1394/raw1394.h
++
++UTILS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv
+ OUTPUT = libquicktime.a
+ OUTPUT_SHARED = libquicktime.so.1.2.0
+ 
+-all: $(OUTPUT) $(OUTPUT_SHARED) util
++all: $(OUTPUT) $(OUTPUT_SHARED) $(UTILS)
+ 
+ $(OUTPUT): $(OBJS)
+ 	$(MAKE) -C jpeg
+@@ -238,20 +254,18 @@
+ qtdump: dump.o $(OUTPUT_SHARED)
+ 	$(CC) -o qtdump dump.o -L. -lquicktime
+ 
+-make_streamable: make_streamable.o $(OUTPUT_SHARED)
+-	$(CC) -o make_streamable make_streamable.o -L. -lquicktime
++qtmake_streamable: make_streamable.o $(OUTPUT_SHARED)
++	$(CC) -o qtmake_streamable make_streamable.o -L. -lquicktime
+ 
+-dechunk: dechunk.o $(OUTPUT_SHARED)
+-	$(CC) -o dechunk dechunk.o -L. -lquicktime
++qtdechunk: dechunk.o $(OUTPUT_SHARED)
++	$(CC) -o qtdechunk dechunk.o -L. -lquicktime
+ 
+-yuv4toyuv: yuv4toyuv.o $(OUTPUT_SHARED)
+-	$(CC) -o yuv4toyuv yuv4toyuv.o -L. -lquicktime
++qtyuv4toyuv: yuv4toyuv.o $(OUTPUT_SHARED)
++	$(CC) -o qtyuv4toyuv yuv4toyuv.o -L. -lquicktime
+ 
+ qtinfo: qtinfo.o $(OUTPUT_SHARED)
+ 	$(CC) -o qtinfo qtinfo.o -L. -lquicktime
+ 
+-util:  qtdump make_streamable qtinfo dechunk yuv4toyuv
+-	
+ 
+ quicktime.o: quicktime.h  quicktime.c
+ 
+@@ -260,6 +274,20 @@
+ 
+ %_pic.o: %.c
+ 	$(CC) -fPIC $(CFLAGS) -c $< -o $@
++
++install:
++	install -d $(DESTDIR)/bin
++	install -d $(DESTDIR)/include/quicktime
++	install -d $(DESTDIR)/include/quicktime/libdv
++	install -d $(DESTDIR)/include/quicktime/libraw1394
++	install -d $(DESTDIR)/lib
++	install $(UTILS) $(DESTDIR)/bin
++	install -m 644 $(INSTALL_HEADERS) $(DESTDIR)/include/quicktime
++	install -m 644 $(INSTALL_DHEADERS) $(DESTDIR)/include/quicktime/libdv
++	install -m 644 $(INSTALL_RHEADERS) $(DESTDIR)/include/quicktime/libraw1394
++	install -m 644 $(OUTPUT) $(DESTDIR)/lib
++	install $(OUTPUT_SHARED) $(DESTDIR)/lib
++	ln -sf $(OUTPUT_SHARED) $(DESTDIR)/lib/libquicktime.so
+ 
+ clean:
+ 	rm -f core

@@ -1,0 +1,390 @@
+diff -ur quicktime4linux-1.2/Makefile quicktime4linux-1.2.shared/Makefile
+--- quicktime4linux-1.2/Makefile	Tue Aug  8 22:06:38 2000
++++ quicktime4linux-1.2.shared/Makefile	Sun Nov 19 03:10:38 2000
+@@ -1,5 +1,9 @@
+ include global_config
+ 
++MAJOR = 1
++MINOR = 2
++CFLAGSSHARE = -shared -Wl,-soname,libquicktime.so.$(MAJOR)
++
+ OBJS = \
+ 	atom.o \
+ 	codecs.o \
+@@ -106,10 +110,117 @@
+ 	libdv/weighting.o \
+ 	libdv/ycrcb_to_rgb32.o
+ 
++OBJS_SHARED = \
++	atom_pic.o \
++	codecs_pic.o \
++	ctab_pic.o \
++	dinf_pic.o \
++	dref_pic.o \
++	dv_pic.o \
++	edts_pic.o \
++	elst_pic.o \
++	graphics_pic.o \
++	hdlr_pic.o \
++	ima4_pic.o \
++	jdatasrc_pic.o \
++	jdatadst_pic.o \
++	jpeg_pic.o \
++	matrix_pic.o \
++	mdat_pic.o \
++	mdhd_pic.o \
++	mdia_pic.o \
++	minf_pic.o \
++	moov_pic.o \
++	mvhd_pic.o \
++	qtpng_pic.o \
++	quicktime_pic.o \
++	raw_pic.o \
++	rawaudio_pic.o \
++	smhd_pic.o \
++	stbl_pic.o \
++	stco_pic.o \
++	stsc_pic.o \
++	stsd_pic.o \
++	stsdtable_pic.o \
++	stss_pic.o \
++	stsz_pic.o \
++	stts_pic.o \
++	tkhd_pic.o \
++	trak_pic.o \
++	twos_pic.o \
++	udta_pic.o \
++	ulaw_pic.o \
++	util_pic.o \
++	vmhd_pic.o \
++	yuv2_pic.o \
++	yuv4_pic.o
++
++
++JPEGOBJS_SHARED = \
++	jpeg/jcapimin_pic.o \
++	jpeg/jcapistd_pic.o \
++	jpeg/jctrans_pic.o \
++	jpeg/jcparam_pic.o \
++	jpeg/jdatadst_pic.o \
++	jpeg/jcinit_pic.o \
++	jpeg/jcmaster_pic.o \
++	jpeg/jcmarker_pic.o \
++	jpeg/jcmainct_pic.o \
++	jpeg/jcprepct_pic.o \
++	jpeg/jccoefct_pic.o \
++	jpeg/jccolor_pic.o \
++	jpeg/jcsample_pic.o \
++	jpeg/jchuff_pic.o \
++	jpeg/jcphuff_pic.o \
++	jpeg/jcdctmgr_pic.o \
++	jpeg/jfdctfst_pic.o \
++	jpeg/jfdctflt_pic.o \
++	jpeg/jfdctint_pic.o \
++	jpeg/jdapimin_pic.o \
++	jpeg/jdapistd_pic.o \
++	jpeg/jdtrans_pic.o \
++	jpeg/jdatasrc_pic.o \
++	jpeg/jdmaster_pic.o \
++	jpeg/jdinput_pic.o \
++	jpeg/jdmarker_pic.o \
++	jpeg/jdhuff_pic.o \
++	jpeg/jdphuff_pic.o \
++	jpeg/jdmainct_pic.o \
++	jpeg/jdcoefct_pic.o \
++	jpeg/jdpostct_pic.o \
++	jpeg/jddctmgr_pic.o \
++	jpeg/jidctfst_pic.o \
++	jpeg/jidctflt_pic.o \
++	jpeg/jidctint_pic.o \
++	jpeg/jidctred_pic.o \
++	jpeg/jdsample_pic.o \
++	jpeg/jdcolor_pic.o \
++	jpeg/jquant1_pic.o \
++	jpeg/jquant2_pic.o \
++	jpeg/jdmerge_pic.o \
++	jpeg/jcomapi_pic.o \
++	jpeg/jutils_pic.o \
++	jpeg/jerror_pic.o \
++	jpeg/jmemmgr_pic.o \
++	jpeg/jmemnobs_pic.o
++
++DVOBJS_SHARED = \
++	libdv/bitstream_pic.o \
++	libdv/dct_pic.o \
++	libdv/idct_248_pic.o \
++	libdv/libdv_pic.o \
++	libdv/parse_pic.o \
++	libdv/place_pic.o \
++	libdv/quant_pic.o \
++	libdv/vlc_pic.o \
++	libdv/weighting_pic.o \
++	libdv/ycrcb_to_rgb32_pic.o
+ 
+-OUTPUT = libquicktime.a
+ 
++OUTPUT = libquicktime.a
++OUTPUT_SHARED = libquicktime.so.1.2.0
+ 
++all: $(OUTPUT) $(OUTPUT_SHARED) util
+ 
+ $(OUTPUT): $(OBJS)
+ 	$(MAKE) -C jpeg
+@@ -117,34 +228,44 @@
+ 	$(MAKE) -C libraw1394
+ 	ar rcs $(OUTPUT) $(OBJS) $(JPEGOBJS) $(DVOBJS) $(FIREWIREOBJS) $(DVMMXOBJS)
+ 
+-dump: dump.o $(OUTPUT)
+-	$(CC) -o dump dump.o $(OUTPUT) -lpng -lz -lpthread -lglib -lraw1394
++$(OUTPUT_SHARED): $(OBJS_SHARED)
++	$(MAKE) -C jpeg
++	$(MAKE) -C libdv
++	$(MAKE) -C libraw1394
++	$(CC) $(CFLAGSSHARE) -o $(OUTPUT_SHARED) -lpthread -lglib -lpng $(OBJS_SHARED) $(JPEGOBJS_SHARED) $(DVOBJS_SHARED) $(FIREWIREOBJS_SHARED) $(DVMMXOBJS_SHARED)
++	ln -sf $(OUTPUT_SHARED) libquicktime.so
++
++qtdump: dump.o $(OUTPUT_SHARED)
++	$(CC) -o qtdump dump.o -L. -lquicktime
+ 
+-make_streamable: make_streamable.o $(OUTPUT)
+-	$(CC) -o make_streamable make_streamable.o $(OUTPUT) -lpng -lz -lpthread -lglib -lraw1394
++make_streamable: make_streamable.o $(OUTPUT_SHARED)
++	$(CC) -o make_streamable make_streamable.o -L. -lquicktime
+ 
+-dechunk: dechunk.o $(OUTPUT)
+-	$(CC) -o dechunk dechunk.o $(OUTPUT) -lpng -lz -lpthread -lglib -lraw1394
++dechunk: dechunk.o $(OUTPUT_SHARED)
++	$(CC) -o dechunk dechunk.o -L. -lquicktime
+ 
+-yuv4toyuv: yuv4toyuv.o $(OUTPUT)
+-	$(CC) -o yuv4toyuv yuv4toyuv.o $(OUTPUT) -lpng -lz -lpthread -lglib -lraw1394
++yuv4toyuv: yuv4toyuv.o $(OUTPUT_SHARED)
++	$(CC) -o yuv4toyuv yuv4toyuv.o -L. -lquicktime
+ 
+-qtinfo: qtinfo.o
+-	$(CC) -o qtinfo qtinfo.o $(OUTPUT) -lpng -lz -lpthread -lglib -lraw1394
++qtinfo: qtinfo.o $(OUTPUT_SHARED)
++	$(CC) -o qtinfo qtinfo.o -L. -lquicktime
+ 
+-util:  dump make_streamable qtinfo dechunk yuv4toyuv
++util:  qtdump make_streamable qtinfo dechunk yuv4toyuv
+ 	
+ 
+ quicktime.o: quicktime.h  quicktime.c
+ 
+ .c.o:
+-	$(CC) -c `./c_flags` $*.c
++	$(CC) -c $(CFLAGS) $*.c
++
++%_pic.o: %.c
++	$(CC) -fPIC $(CFLAGS) -c $< -o $@
+ 
+ clean:
+ 	rm -f core
+-	rm -f *.o
++	rm -f *.o *.so*
+ 	rm -f $(OUTPUT)
+-	rm -f dump make_streamable a.out qtinfo dechunk yuv4toyuv
++	rm -f qtdump make_streamable a.out qtinfo dechunk yuv4toyuv
+ 	rm -rf .deps
+ 	$(MAKE) -C libdv clean
+ 	$(MAKE) -C jpeg clean
+diff -ur quicktime4linux-1.2/configure quicktime4linux-1.2.shared/configure
+--- quicktime4linux-1.2/configure	Tue Aug  8 22:06:38 2000
++++ quicktime4linux-1.2.shared/configure	Sun Nov 19 03:01:40 2000
+@@ -35,7 +35,7 @@
+ EOF
+ 
+ if test -z "$CFLAGS"; then
+-	echo >> global_config "CFLAGS = -O2 -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2 -I/usr/local/include"
++	echo >> global_config "CFLAGS = \$(COPT) -I../ -I./"
+ fi
+ 
+ if [ ${USE_FIREWIRE} = 1 ]; then
+@@ -62,6 +62,16 @@
+ DVMMX_OBJS2 = idct_block_mmx.o \
+ 	quant_x86.o \
+ 	vlc_x86.o
++
++DVMMXOBJS_SHARED = \
++	libdv/idct_block_mmx_pic.o \
++	libdv/quant_x86_pic.o \
++	libdv/vlc_x86_pic.o
++
++DVMMX_OBJS2_SHARED = \
++	idct_block_mmx_pic.o \
++	quant_x86_pic.o \
++	vlc_x86_pic.o
+ EOF
+ fi
+ 
+@@ -80,6 +90,20 @@
+ 	iso.o \
+ 	main.o \
+ 	readwrite.o
++
++FIREWIREOBJS_SHARED = \
++	libraw1394/eventloop_pic.o \
++	libraw1394/fcp_pic.o \
++	libraw1394/iso_pic.o \
++	libraw1394/main_pic.o \
++	libraw1394/readwrite_pic.o
++
++FIREWIREOBJS2_SHARED = \
++	eventloop_pic.o \
++	fcp_pic.o \
++	iso_pic.o \
++	main_pic.o \
++	readwrite_pic.o
+ 
+ EOF
+ fi
+diff -ur quicktime4linux-1.2/global_config quicktime4linux-1.2.shared/global_config
+--- quicktime4linux-1.2/global_config	Tue Aug  8 22:06:39 2000
++++ quicktime4linux-1.2.shared/global_config	Sun Nov 19 03:01:55 2000
+@@ -1,8 +1,14 @@
+ # DO NOT EDIT.  EDIT ./configure INSTEAD AND RERUN IT.
+-CFLAGS += -DUSE_MMX
++CFLAGS = $(COPT) -I../ -I./
++CFLAGS += -DHAVE_FIREWIRE
+ CFLAGS += -I. -Ijpeg -Ilibdv $(shell glib-config --cflags)
+ export CFLAGS
+ CC = gcc
+-DVMMXOBJS = 	libdv/idct_block_mmx.o 	libdv/quant_x86.o 	libdv/vlc_x86.o
++FIREWIREOBJS = 	libraw1394/eventloop.o 	libraw1394/fcp.o 	libraw1394/iso.o 	libraw1394/main.o 	libraw1394/readwrite.o
++
++FIREWIREOBJS2 = 	eventloop.o 	fcp.o 	iso.o 	main.o 	readwrite.o
++
++FIREWIREOBJS_SHARED = 	libraw1394/eventloop_pic.o 	libraw1394/fcp_pic.o 	libraw1394/iso_pic.o 	libraw1394/main_pic.o 	libraw1394/readwrite_pic.o
++
++FIREWIREOBJS2_SHARED = 	eventloop_pic.o 	fcp_pic.o 	iso_pic.o 	main_pic.o 	readwrite_pic.o
+ 
+-DVMMX_OBJS2 = idct_block_mmx.o 	quant_x86.o 	vlc_x86.o
+diff -ur quicktime4linux-1.2/jpeg/Makefile quicktime4linux-1.2.shared/jpeg/Makefile
+--- quicktime4linux-1.2/jpeg/Makefile	Tue Aug  8 22:06:39 2000
++++ quicktime4linux-1.2.shared/jpeg/Makefile	Sun Nov 19 02:35:32 2000
+@@ -48,11 +48,62 @@
+ 	jmemmgr.o \
+ 	jmemnobs.o
+ 
++OBJS_SHARED = \
++	jcapimin_pic.o \
++	jcapistd_pic.o \
++	jctrans_pic.o \
++	jcparam_pic.o \
++	jdatadst_pic.o \
++	jcinit_pic.o \
++	jcmaster_pic.o \
++	jcmarker_pic.o \
++	jcmainct_pic.o \
++	jcprepct_pic.o \
++	jccoefct_pic.o \
++	jccolor_pic.o \
++	jcsample_pic.o \
++	jchuff_pic.o \
++	jcphuff_pic.o \
++	jcdctmgr_pic.o \
++	jfdctfst_pic.o \
++	jfdctflt_pic.o \
++	jfdctint_pic.o \
++	jdapimin_pic.o \
++	jdapistd_pic.o \
++	jdtrans_pic.o \
++	jdatasrc_pic.o \
++	jdmaster_pic.o \
++	jdinput_pic.o \
++	jdmarker_pic.o \
++	jdhuff_pic.o \
++	jdphuff_pic.o \
++	jdmainct_pic.o \
++	jdcoefct_pic.o \
++	jdpostct_pic.o \
++	jddctmgr_pic.o \
++	jidctfst_pic.o \
++	jidctflt_pic.o \
++	jidctint_pic.o \
++	jidctred_pic.o \
++	jdsample_pic.o \
++	jdcolor_pic.o \
++	jquant1_pic.o \
++	jquant2_pic.o \
++	jdmerge_pic.o \
++	jcomapi_pic.o \
++	jutils_pic.o \
++	jerror_pic.o \
++	jmemmgr_pic.o \
++	jmemnobs_pic.o
+ 
+-all: $(OBJS)
++
++all: $(OBJS) $(OBJS_SHARED)
+ 
+ .c.o:
+-	$(CC) -c `./c_flags` $*.c
++	$(CC) -c $(CFLAGS) $*.c
++
++%_pic.o: %.c
++	$(CC) -fPIC $(CFLAGS) -c $< -o $@
+ 
+ clean:
+ 	rm -f *.o core *.a
+diff -ur quicktime4linux-1.2/libdv/Makefile quicktime4linux-1.2.shared/libdv/Makefile
+--- quicktime4linux-1.2/libdv/Makefile	Tue Aug  8 22:06:39 2000
++++ quicktime4linux-1.2.shared/libdv/Makefile	Sun Nov 19 02:56:10 2000
+@@ -15,16 +15,34 @@
+ 	weighting.o \
+ 	ycrcb_to_rgb32.o
+ 
+-all: $(OBJS) $(DVMMX_OBJS2)
++OBJS_SHARED = \
++	bitstream_pic.o \
++	dct_pic.o \
++	idct_248_pic.o \
++	libdv_pic.o \
++	place_pic.o \
++	parse_pic.o \
++	quant_pic.o \
++	vlc_pic.o \
++	weighting_pic.o \
++	ycrcb_to_rgb32_pic.o
+ 
+-playdv: playdv.o $(OUTPUT)
+-	gcc -o playdv playdv.o $(OUTPUT) $(LFLAGS) $(LIBS)
++all: $(OBJS) $(DVMMX_OBJS2) $(OBJS_SHARED) $(DVMMX_OBJS2_SHARED)
++
++playdv: playdv.o $(OUTPUT_SHARED)
++	gcc -o playdv playdv.o -L../ -L./ -lquicktime $(LFLAGS) $(LIBS)
+ 
+ .c.o:
+-	$(CC) -c `./c_flags` $*.c
++	$(CC) -c $(CFLAGS) $*.c
+ 
+ .S.o:
+-	$(CC) -c `./c_flags` $*.S
++	$(CC) -c $(CFLAGS) $*.S
++
++%_pic.o: %.c
++	$(CC) -fPIC $(CFLAGS) -c $< -o $@
++
++%_pic.o: %.S
++	$(CC) -fPIC $(CFLAGS) -c $< -o $@
+ 
+ clean:
+ 	rm -f *.o *.a playdv core
+diff -ur quicktime4linux-1.2/libraw1394/Makefile quicktime4linux-1.2.shared/libraw1394/Makefile
+--- quicktime4linux-1.2/libraw1394/Makefile	Tue Aug  8 22:06:39 2000
++++ quicktime4linux-1.2.shared/libraw1394/Makefile	Sun Nov 19 02:37:23 2000
+@@ -1,9 +1,12 @@
+ include ../global_config
+ 
+-all: $(FIREWIREOBJS2)
++all: $(FIREWIREOBJS2) $(FIREWIREOBJS2_SHARED)
+ 
+ clean:
+ 	rm -f *.o core
+ 
+ .c.o:
+ 	$(CC) -c $(CFLAGS) $*.c
++
++%_pic.o: %.c
++	$(CC) -fPIC $(CFLAGS) -c $< -o $@
