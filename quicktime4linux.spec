@@ -1,7 +1,7 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.0.1
+Version:	2.0.2
 Release:	1
 License:	GPL
 Group:		Libraries
@@ -15,11 +15,11 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	ffmpeg-devel >= 0.4.8
 BuildRequires:	glib-devel
-BuildRequires:	lame-libs-devel
+BuildRequires:	lame-libs-devel >= 3.93.1
 BuildRequires:	libdv-devel >= 0.99
 BuildRequires:	libjpeg-devel
 BuildRequires:	libmpeg3-devel >= 1.5.3
-BuildRequires:	libogg-devel
+BuildRequires:	libogg-devel >= 2:1.0
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.0
@@ -45,14 +45,14 @@ YUV 4:2:0, a tak¿e audio IMA4, ulaw i liniowy format PCM.
 Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 Requires:	ffmpeg-devel >= 0.4.8
 Requires:	glib-devel
-Requires:	lame-libs-devel
+Requires:	lame-libs-devel >= 3.93.1
 Requires:	libdv-devel >= 0.99
 Requires:	libjpeg-devel
 Requires:	libmpeg3-devel >= 1.5.3
-Requires:	libogg-devel
+Requires:	libogg-devel >= 2:1.0
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.0
 
@@ -66,7 +66,7 @@ Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
 Summary:	Useful tools to operate at Quicktime files
 Summary(pl):	Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Multimedia
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
 
 %description progs
 Useful tools to operate at Quicktime files.
@@ -78,7 +78,7 @@ Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 Summary:	Static quicktime4linux libraries
 Summary(pl):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static quicktime4linux libraries.
