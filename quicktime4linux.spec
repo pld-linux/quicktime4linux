@@ -1,6 +1,6 @@
 Summary:	quicktime for Linux
 Name:		quicktime4linux
-Version:	1.1.8
+Version:	1.1.9
 Release:	1
 License:	GPL
 Group:		Libraries
