@@ -10,7 +10,7 @@ libquicktime_la_LDFLAGS = -version-info 1:4:0
 libquicktime_la_LIBADD = -L/usr/X11R6/lib -lpng -ljpeg -ldv -lraw1394 -lpthread
 
 includedir = $(prefix)/include/quicktime
-include_HEADERS = quicktime.h qtprivate.h
+include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h
 
 INCLUDES = $(GLIB_CFLAGS) -I/usr/X11R6/include -I/usr/X11R6/include/libdv -DHAVE_FIREWIRE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
