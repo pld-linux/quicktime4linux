@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	1.4
-Release:	2
+Release:	3
 License:	GPL
 Group:		Libraries
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
@@ -13,10 +13,11 @@ URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	glib-devel
-BuildRequires:	libpng-devel >= 1.0.8
-BuildRequires:	libjpeg-devel
 BuildRequires:	libdv-devel >= 0.9
+BuildRequires:	libjpeg-devel
+BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libraw1394-devel
+BuildRequires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -81,6 +82,7 @@ install %{SOURCE2} configure.in
 
 %build
 rm -f missing
+libtoolize --copy --force
 aclocal
 autoconf
 automake -a -c
