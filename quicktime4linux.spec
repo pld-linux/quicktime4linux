@@ -5,13 +5,6 @@ Version:	1.4
 Release:	2
 License:	GPL
 Group:		Libraries
-Group(de):	Libraries
-Group(es):	Bibliotecas
-Group(fr):	Librairies
-Group(pl):	Biblioteki
-Group(pt_BR):	Bibliotecas
-Group(ru):	Библиотеки
-Group(uk):	Б╕бл╕отеки
 Source0:	http://heroinewarrior.com/%{name}-%{version}.tar.gz
 Source1:	qt4linux-Makefile.am
 Source2:	qt4linux-configure.in
@@ -42,13 +35,6 @@ YUV 4:2:0, a tak©e audio IMA4, ulaw i liniowy format PCM.
 Summary:	Header files and development documentation for quicktime4linux
 Summary(pl):	Pliki nagЁСwkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
 Requires:	glib-devel
 Requires:	libpng-devel >= 1.0.8
@@ -66,9 +52,6 @@ Pliki nagЁСwkowe i dokumentacja do biblioteki quicktime4linux.
 Summary:	Useful tools to operate at Quicktime files
 Summary(pl):	Po©yteczne narzЙdzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Graphics
-Group(de):	Applikationen/Grafik
-Group(pl):	Aplikacje/Grafika
-Group(pt):	AplicaГУes/GrАficos
 Requires:	%{name} = %{version}
 
 %description progs
@@ -81,13 +64,6 @@ Po©yteczne narzЙdzia od operowania na plikach w formacie Quicktime.
 Summary:	Static quicktime4linux libraries
 Summary(pl):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name}-devel = %{version}
 
 %description static
