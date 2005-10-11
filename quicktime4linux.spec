@@ -1,33 +1,34 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.0.4
-Release:	3
+Version:	2.1
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	c3b89779dd7082b3852db935fc18d91d
+# Source0-md5:	0c51ffa70b7788d26fa69ad4a295da79
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
 URL:		http://heroinewarrior.com/quicktime.php3
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	faac-devel >= 1.24
 BuildRequires:	faad2-devel >= 2.0
-BuildRequires:	ffmpeg-devel >= 0.4.8
-BuildRequires:	glib-devel
+BuildRequires:	ffmpeg-devel >= 0.4.9-0.20050714
 BuildRequires:	lame-libs-devel >= 3.93.1
-BuildRequires:	libdv-devel >= 0.102
+BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.5.3
-BuildRequires:	libogg-devel >= 2:1.0
+BuildRequires:	libmpeg3-devel >= 1.6
+BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
-BuildRequires:	libvorbis-devel >= 1:1.0
+BuildRequires:	libvorbis-devel >= 1:1.1.1
+BuildRequires:	libx264-devel >= 0.0.20050714
 BuildRequires:	pkgconfig >= 1:0.9.0
-Requires:	ffmpeg >= 0.4.8
-Requires:	libdv >= 0.99
-Requires:	libmpeg3 >= 1.5.3
+Requires:	ffmpeg >= 0.4.9-0.20050714
+Requires:	libdv >= 0.104
+Requires:	libmpeg3 >= 1.6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -48,15 +49,15 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
-Requires:	ffmpeg-devel >= 0.4.8
+Requires:	ffmpeg-devel >= 0.4.9-0.20050714
 Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
-Requires:	libdv-devel >= 0.99
+Requires:	libdv-devel >= 0.104
 Requires:	libjpeg-devel
-Requires:	libmpeg3-devel >= 1.5.3
-Requires:	libogg-devel >= 2:1.0
+Requires:	libmpeg3-devel >= 1.6
+Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
-Requires:	libvorbis-devel >= 1:1.0
+Requires:	libvorbis-devel >= 1:1.1.1
 
 %description devel
 Header files and development documentation for quicktime4linux.
@@ -94,8 +95,7 @@ Biblioteki statyczne quicktime4linux.
 %patch1 -p1
 %patch2 -p1
 
-rm -rf faad2 ffmpeg-* jpeg jpeg-mmx-* lame-* libdv-* libogg-* libvorbis-*
-%{__perl} -pi -e 's@"faad2/include/faad\.h"@<faad.h>@' mp4a.c
+rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
 
 %build
 %{__libtoolize}
