@@ -25,14 +25,13 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
  #include <pthread.h>
  #include <sys/time.h>
  
-diff -uNr quicktime.orig/libmjpeg.h quicktime/libmjpeg.h
---- quicktime.orig/libmjpeg.h	Wed Nov 28 16:03:55 2001
-+++ quicktime/libmjpeg.h	Fri Nov  8 19:02:43 2002
+--- quicktime4linux-2.1/libmjpeg.h.orig	2005-08-09 07:35:17.000000000 +0200
++++ quicktime4linux-2.1/libmjpeg.h	2005-10-11 21:02:25.040495192 +0200
 @@ -30,9 +30,9 @@
  
  
  #include <stdio.h>
--#include "jpeg/jpeglib.h"
+-#include "jpeglib.h"
 +#include <jpeglib.h>
  #include <png.h>              /* Need setjmp.h as included by png.h */
 -#include "pthread.h"
