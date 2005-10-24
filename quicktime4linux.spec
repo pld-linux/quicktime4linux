@@ -24,11 +24,12 @@ BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.1.1
-BuildRequires:	libx264-devel >= 0.1.3-0.20050714
+BuildRequires:	libx264-devel >= 0.1.2-1.20050714
 BuildRequires:	pkgconfig >= 1:0.9.0
 Requires:	ffmpeg >= 0.4.9-1.20050714
 Requires:	libdv >= 0.104
 Requires:	libmpeg3 >= 1.6
+Requires:	libx264 >= 0.1.2-1.20050714
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -58,6 +59,7 @@ Requires:	libmpeg3-devel >= 1.6
 Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.1.1
+Requires:	libx264-devel >= 0.1.2-1.20050714
 
 %description devel
 Header files and development documentation for quicktime4linux.
