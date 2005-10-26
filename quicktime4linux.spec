@@ -60,12 +60,26 @@ Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.1.1
 Requires:	libx264-devel >= 0.1.2-1.20050714
+Obsoletes:	libquicktime-devel
 
 %description devel
 Header files and development documentation for quicktime4linux.
 
 %description devel -l pl
 Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
+
+%package static
+Summary:	Static quicktime4linux libraries
+Summary(pl):	Biblioteki statyczne quicktime4linux
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Obsoletes:	libquicktime-static
+
+%description static
+Static quicktime4linux libraries.
+
+%description static -l pl
+Biblioteki statyczne quicktime4linux.
 
 %package progs
 Summary:	Useful tools to operate at Quicktime files
@@ -78,18 +92,6 @@ Useful tools to operate at Quicktime files.
 
 %description progs -l pl
 Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
-
-%package static
-Summary:	Static quicktime4linux libraries
-Summary(pl):	Biblioteki statyczne quicktime4linux
-Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-
-%description static
-Static quicktime4linux libraries.
-
-%description static -l pl
-Biblioteki statyczne quicktime4linux.
 
 %prep
 %setup -q
@@ -127,10 +129,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
-%files progs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
-
 %files devel
 %defattr(644,root,root,755)
 %doc docs/*.html
@@ -141,3 +139,7 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+
+%files progs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/*
