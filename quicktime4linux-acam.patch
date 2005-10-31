@@ -9,17 +9,17 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +
 +SUBDIRS = $(DECORE_DIR) $(ENCORE_DIR)
 +lib_LTLIBRARIES = libquicktime.la
-+libquicktime_la_SOURCES = atom.c avi_hdrl.c avi_ix.c avi_idx1.c avi_indx.c avi_movi.c \
++libquicktime_la_SOURCES = atom.c avcc.c avi_hdrl.c avi_ix.c avi_idx1.c avi_indx.c avi_movi.c \
 +	avi_odml.c avi_riff.c avi_strl.c cmodel_default.c cmodel_float.c cmodel_yuv420p.c cmodel_yuv422.c \
-+	codecs.c colormodels.c ctab.c dinf.c dref.c dv.c edts.c elst.c esds.c graphics.c hdlr.c \
-+	ima4.c jpeg.c jpeg_old.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c mdia.c minf.c \
-+	moov.c mp4a.c mpeg4.c mvhd.c plugin.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
++	codecs.c colormodels.c ctab.c dinf.c dref.c edts.c elst.c esds.c graphics.c hdlr.c \
++	ima4.c jpeg.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c mdia.c minf.c \
++	moov.c mp4a.c mpeg4.c mvhd.c plugin.c qtdv.c qtffmpeg.c qth264.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
 +	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c twos.c \
 +	udta.c ulaw.c util.c v308.c v408.c v410.c vbraudio.c vmhd.c vorbis.c wma.c wmx2.c workarounds.c \
 +	yuv2.c yuv4.c yv12.c
 +
 +libquicktime_la_LDFLAGS = -version-info 2:4:1
-+libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame -lfaad \
++libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame -lfaad -lx264 \
 +	$(LIBDV_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
 +	-lavcodec $(ENCORE_DIR)/libencore.la -ldl -lpthread
 +
