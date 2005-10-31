@@ -11,24 +11,25 @@ Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
 URL:		http://heroinewarrior.com/quicktime.php3
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
+BuildRequires:	faac-devel >= 1.24
 BuildRequires:	faad2-devel >= 2.0
-BuildRequires:	ffmpeg-devel >= 0.4.8
-BuildRequires:	glib-devel
+BuildRequires:	ffmpeg-devel >= 0.4.9-1.20050714
 BuildRequires:	lame-libs-devel >= 3.93.1
-BuildRequires:	libdv-devel >= 0.102
+BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.5.3
-BuildRequires:	libogg-devel >= 2:1.0
+BuildRequires:	libmpeg3-devel >= 1.6
+BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
-BuildRequires:	libvorbis-devel >= 1:1.0
-BuildRequires:	libx264-devel
+BuildRequires:	libvorbis-devel >= 1:1.1.1
+BuildRequires:	libx264-devel >= 0.1.2-1.20050714
 BuildRequires:	pkgconfig >= 1:0.9.0
-Requires:	ffmpeg >= 0.4.8
-Requires:	libdv >= 0.99
-Requires:	libmpeg3 >= 1.5.3
+Requires:	ffmpeg >= 0.4.9-1.20050714
+Requires:	libdv >= 0.104
+Requires:	libmpeg3 >= 1.6
+Requires:	libx264 >= 0.1.2-1.20050714
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -49,21 +50,36 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
-Requires:	ffmpeg-devel >= 0.4.8
+Requires:	ffmpeg-devel >= 0.4.9-1.20050714
 Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
-Requires:	libdv-devel >= 0.99
+Requires:	libdv-devel >= 0.104
 Requires:	libjpeg-devel
-Requires:	libmpeg3-devel >= 1.5.3
-Requires:	libogg-devel >= 2:1.0
+Requires:	libmpeg3-devel >= 1.6
+Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
-Requires:	libvorbis-devel >= 1:1.0
+Requires:	libvorbis-devel >= 1:1.1.1
+Requires:	libx264-devel >= 0.1.2-1.20050714
+Obsoletes:	libquicktime-devel
 
 %description devel
 Header files and development documentation for quicktime4linux.
 
 %description devel -l pl
 Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
+
+%package static
+Summary:	Static quicktime4linux libraries
+Summary(pl):	Biblioteki statyczne quicktime4linux
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Obsoletes:	libquicktime-static
+
+%description static
+Static quicktime4linux libraries.
+
+%description static -l pl
+Biblioteki statyczne quicktime4linux.
 
 %package progs
 Summary:	Useful tools to operate at Quicktime files
@@ -77,26 +93,13 @@ Useful tools to operate at Quicktime files.
 %description progs -l pl
 Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 
-%package static
-Summary:	Static quicktime4linux libraries
-Summary(pl):	Biblioteki statyczne quicktime4linux
-Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-
-%description static
-Static quicktime4linux libraries.
-
-%description static -l pl
-Biblioteki statyczne quicktime4linux.
-
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
-rm -rf faad2 ffmpeg-* jpeg jpeg-mmx-* lame-* libdv-* libogg-* libvorbis-*
-%{__perl} -pi -e 's@"faad2/include/faad\.h"@<faad.h>@' mp4a.c
+rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
 
 %build
 %{__libtoolize}
@@ -126,10 +129,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 
-%files progs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/*
-
 %files devel
 %defattr(644,root,root,755)
 %doc docs/*.html
@@ -140,3 +139,7 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/lib*.a
+
+%files progs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/*
