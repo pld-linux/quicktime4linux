@@ -1,12 +1,12 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.0.4
-Release:	4
+Version:	2.1
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	c3b89779dd7082b3852db935fc18d91d
+# Source0-md5:	0c51ffa70b7788d26fa69ad4a295da79
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
@@ -24,6 +24,7 @@ BuildRequires:	libogg-devel >= 2:1.0
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.0
+BuildRequires:	libx264-devel
 BuildRequires:	pkgconfig >= 1:0.9.0
 Requires:	ffmpeg >= 0.4.8
 Requires:	libdv >= 0.99
