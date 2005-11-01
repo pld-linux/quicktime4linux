@@ -25,7 +25,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +
 +includedir = $(prefix)/include/quicktime
 +include_HEADERS = quicktime.h qtprivate.h codecs.h funcprotos.h colormodels.h graphics.h \
-+	libdv.h libmjpeg.h jpeg.h
++	libdv.h libmjpeg.h jpeg.h cmodel_permutation.h
 +
 +INCLUDES = $(LIBDV_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
 +	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/ffmpeg \
