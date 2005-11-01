@@ -15,7 +15,7 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	faac-devel >= 1.24
 BuildRequires:	faad2-devel >= 2.0
-BuildRequires:	ffmpeg-devel >= 0.4.9-1.20050714
+BuildRequires:	ffmpeg-devel >= 0.4.9-3.20050714
 BuildRequires:	lame-libs-devel >= 3.93.1
 BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel
@@ -26,7 +26,7 @@ BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.1.1
 BuildRequires:	libx264-devel >= 0.1.2-1.20050714
 BuildRequires:	pkgconfig >= 1:0.9.0
-Requires:	ffmpeg >= 0.4.9-1.20050714
+Requires:	ffmpeg >= 0.4.9-3.20050714
 Requires:	libdv >= 0.104
 Requires:	libmpeg3 >= 1.6
 Requires:	libx264 >= 0.1.2-1.20050714
@@ -50,7 +50,7 @@ Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
-Requires:	ffmpeg-devel >= 0.4.9-1.20050714
+Requires:	ffmpeg-devel >= 0.4.9-3.20050714
 Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
 Requires:	libdv-devel >= 0.104
