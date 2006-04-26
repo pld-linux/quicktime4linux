@@ -10,6 +10,7 @@ Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
+Patch3:		%{name}-ffmpeg.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -98,6 +99,7 @@ Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
 
