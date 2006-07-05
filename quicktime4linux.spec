@@ -1,16 +1,15 @@
 Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.1
-Release:	2
+Version:	2.2
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	0c51ffa70b7788d26fa69ad4a295da79
+# Source0-md5:	e08575ea5b7674a9066c149353d176d8
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
-Patch3:		%{name}-ffmpeg.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -20,7 +19,7 @@ BuildRequires:	ffmpeg-devel >= 0.4.9-3.20050714
 BuildRequires:	lame-libs-devel >= 3.93.1
 BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.6
+BuildRequires:	libmpeg3-devel >= 1.7
 BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
@@ -29,7 +28,7 @@ BuildRequires:	libx264-devel >= 0.1.2-1.20050714
 BuildRequires:	pkgconfig >= 1:0.9.0
 Requires:	ffmpeg >= 0.4.9-3.20050714
 Requires:	libdv >= 0.104
-Requires:	libmpeg3 >= 1.6
+Requires:	libmpeg3 >= 1.7
 Requires:	libx264 >= 0.1.2-1.20050714
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -56,7 +55,7 @@ Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
 Requires:	libdv-devel >= 0.104
 Requires:	libjpeg-devel
-Requires:	libmpeg3-devel >= 1.6
+Requires:	libmpeg3-devel >= 1.7
 Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.1.1
@@ -99,7 +98,6 @@ Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
 
