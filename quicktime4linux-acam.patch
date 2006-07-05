@@ -13,7 +13,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +	avi_odml.c avi_riff.c avi_strl.c cmodel_default.c cmodel_float.c cmodel_yuv420p.c cmodel_yuv422.c \
 +	codecs.c colormodels.c ctab.c dinf.c dref.c edts.c elst.c esds.c graphics.c hdlr.c \
 +	ima4.c jpeg.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c mdia.c minf.c \
-+	moov.c mp4a.c mpeg4.c mvhd.c plugin.c qtdv.c qtffmpeg.c qth264.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
++	moov.c mp4a.c mpeg4.c mvhd.c plugin.c qtcache.c qtdv.c qtffmpeg.c qth264.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
 +	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c twos.c \
 +	udta.c ulaw.c util.c v308.c v408.c v410.c vbraudio.c vmhd.c vorbis.c wma.c wmx2.c workarounds.c \
 +	yuv2.c yuv4.c yv12.c
@@ -54,7 +54,7 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 --- quicktime.orig/configure.ac	Thu Jan  1 01:00:00 1970
 +++ quicktime/configure.ac	Sat May 11 21:28:27 2002
 @@ -0,0 +1,36 @@
-+AC_INIT(quicktime4linux, 2.1)
++AC_INIT(quicktime4linux, 2.2)
 +AM_INIT_AUTOMAKE
 +AC_CONFIG_SRCDIR([atom.c])
 +AM_CONFIG_HEADER([config.h])
