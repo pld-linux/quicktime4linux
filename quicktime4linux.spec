@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.2
-Release:	1
+Release:	2
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
@@ -10,6 +10,7 @@ Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-broken.patch
+Patch3:		%{name}-x264.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -24,12 +25,12 @@ BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.1.1
-BuildRequires:	libx264-devel >= 0.1.2-1.20050714
+BuildRequires:	libx264-devel >= 0.1.2-1.20060828_2245.1
 BuildRequires:	pkgconfig >= 1:0.9.0
 Requires:	ffmpeg >= 0.4.9-3.20050714
 Requires:	libdv >= 0.104
 Requires:	libmpeg3 >= 1.7
-Requires:	libx264 >= 0.1.2-1.20050714
+Requires:	libx264 >= 0.1.2-1.20060828_2245.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -59,7 +60,7 @@ Requires:	libmpeg3-devel >= 1.7
 Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.1.1
-Requires:	libx264-devel >= 0.1.2-1.20050714
+Requires:	libx264-devel >= 0.1.2-1.20060828_2245.1
 Obsoletes:	libquicktime-devel
 
 %description devel
@@ -98,6 +99,7 @@ Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
 
