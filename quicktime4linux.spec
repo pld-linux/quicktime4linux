@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.2
-Release:	2
+Release:	3
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
@@ -52,7 +52,6 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
 Requires:	ffmpeg-devel >= 0.4.9-3.20050714
-Requires:	glib-devel
 Requires:	lame-libs-devel >= 3.93.1
 Requires:	libdv-devel >= 0.104
 Requires:	libjpeg-devel
