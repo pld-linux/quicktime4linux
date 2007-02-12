@@ -1,5 +1,5 @@
 Summary:	Quicktime for Linux
-Summary(pl.UTF-8):   Obsługa formatu Quicktime dla Linuksa
+Summary(pl.UTF-8):	Obsługa formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.2
 Release:	4
@@ -47,7 +47,7 @@ YUV 4:2:0, a także audio IMA4, ulaw i liniowy format PCM.
 
 %package devel
 Summary:	Header files and development documentation for quicktime4linux
-Summary(pl.UTF-8):   Pliki nagłówkowe i dokumentacja do quicktime4linux
+Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
@@ -70,7 +70,7 @@ Pliki nagłówkowe i dokumentacja do biblioteki quicktime4linux.
 
 %package static
 Summary:	Static quicktime4linux libraries
-Summary(pl.UTF-8):   Biblioteki statyczne quicktime4linux
+Summary(pl.UTF-8):	Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Obsoletes:	libquicktime-static
@@ -83,7 +83,7 @@ Biblioteki statyczne quicktime4linux.
 
 %package progs
 Summary:	Useful tools to operate at Quicktime files
-Summary(pl.UTF-8):   Pożyteczne narzędzia od operowania na plikach w formacie Quicktime
+Summary(pl.UTF-8):	Pożyteczne narzędzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Multimedia
 Requires:	%{name} = %{version}-%{release}
 
