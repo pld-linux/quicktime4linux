@@ -1,5 +1,5 @@
 Summary:	Quicktime for Linux
-Summary(pl):	Obs³uga formatu Quicktime dla Linuksa
+Summary(pl.UTF-8):   ObsÅ‚uga formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.2
 Release:	4
@@ -39,15 +39,15 @@ on UNIX systems. Supported by this library video is MJPA, JPEG Photo,
 PNG, RGB, YUV 4:2:2, and YUV 4:2:0 compression and supported audio is
 IMA4, ulaw, and any linear PCM format.
 
-%description -l pl
-Quicktime4linux jest bibliotek± do odczytywania i zapisu plików w
-formacie Quicktime przeznaczon± dla systemów Unix. Obecnie wspiera ona
-nastêpuj±ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV 4:2:2 oraz
-YUV 4:2:0, a tak¿e audio IMA4, ulaw i liniowy format PCM.
+%description -l pl.UTF-8
+Quicktime4linux jest bibliotekÄ… do odczytywania i zapisu plikÃ³w w
+formacie Quicktime przeznaczonÄ… dla systemÃ³w Unix. Obecnie wspiera ona
+nastÄ™pujÄ…ce formaty video: MJPA, JPEG Photo, PNG, RGB, YUV 4:2:2 oraz
+YUV 4:2:0, a takÅ¼e audio IMA4, ulaw i liniowy format PCM.
 
 %package devel
 Summary:	Header files and development documentation for quicktime4linux
-Summary(pl):	Pliki nag³ówkowe i dokumentacja do quicktime4linux
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
@@ -65,12 +65,12 @@ Obsoletes:	libquicktime-devel
 %description devel
 Header files and development documentation for quicktime4linux.
 
-%description devel -l pl
-Pliki nag³ówkowe i dokumentacja do biblioteki quicktime4linux.
+%description devel -l pl.UTF-8
+Pliki nagÅ‚Ã³wkowe i dokumentacja do biblioteki quicktime4linux.
 
 %package static
 Summary:	Static quicktime4linux libraries
-Summary(pl):	Biblioteki statyczne quicktime4linux
+Summary(pl.UTF-8):   Biblioteki statyczne quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Obsoletes:	libquicktime-static
@@ -78,20 +78,20 @@ Obsoletes:	libquicktime-static
 %description static
 Static quicktime4linux libraries.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Biblioteki statyczne quicktime4linux.
 
 %package progs
 Summary:	Useful tools to operate at Quicktime files
-Summary(pl):	Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime
+Summary(pl.UTF-8):   PoÅ¼yteczne narzÄ™dzia od operowania na plikach w formacie Quicktime
 Group:		Applications/Multimedia
 Requires:	%{name} = %{version}-%{release}
 
 %description progs
 Useful tools to operate at Quicktime files.
 
-%description progs -l pl
-Po¿yteczne narzêdzia od operowania na plikach w formacie Quicktime.
+%description progs -l pl.UTF-8
+PoÅ¼yteczne narzÄ™dzia od operowania na plikach w formacie Quicktime.
 
 %prep
 %setup -q
