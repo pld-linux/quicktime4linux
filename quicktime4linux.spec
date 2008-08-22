@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl.UTF-8):	Obsługa formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.2
-Release:	9
+Release:	10
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
@@ -101,6 +101,8 @@ Pożyteczne narzędzia od operowania na plikach w formacie Quicktime.
 %patch3 -p1
 
 rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
+
+sed -i -e 's#-I/usr/include/ffmpeg#-I/usr/include/libavcodec#g' Makefile*
 
 %build
 %{__libtoolize}
