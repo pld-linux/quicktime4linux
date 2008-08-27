@@ -1,35 +1,34 @@
 Summary:	Quicktime for Linux
 Summary(pl.UTF-8):	Obsługa formatu Quicktime dla Linuksa
 Name:		quicktime4linux
-Version:	2.2
-Release:	10
+Version:	2.3
+Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
-# Source0-md5:	e08575ea5b7674a9066c149353d176d8
+# Source0-md5:	db3724400a0b29b49bf494bbb047caf9
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
-Patch2:		%{name}-broken.patch
-Patch3:		%{name}-x264.patch
+Patch2:		%{name}-x264.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	faac-devel >= 1.24
 BuildRequires:	faad2-devel >= 2.0
-BuildRequires:	ffmpeg-devel >= 0.4.9-3.20050714
+BuildRequires:	ffmpeg-devel >= 0.4.9-4.20080822
 BuildRequires:	lame-libs-devel >= 3.93.1
 BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel
-BuildRequires:	libmpeg3-devel >= 1.7
+BuildRequires:	libmpeg3-devel >= 1.8
 BuildRequires:	libogg-devel >= 2:1.1.2
 BuildRequires:	libpng-devel >= 1.0.8
 BuildRequires:	libtool
 BuildRequires:	libvorbis-devel >= 1:1.1.1
 BuildRequires:	libx264-devel >= 0.1.2-1.20061024_2245.1
 BuildRequires:	pkgconfig >= 1:0.9.0
-Requires:	ffmpeg >= 0.4.9-3.20050714
+Requires:	ffmpeg >= 0.4.9-4.20080822
 Requires:	libdv >= 0.104
-Requires:	libmpeg3 >= 1.7
+Requires:	libmpeg3 >= 1.8
 Requires:	libx264 >= 0.1.2-1.20060828_2245.1
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -51,11 +50,11 @@ Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do quicktime4linux
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	faad2-devel >= 2.0
-Requires:	ffmpeg-devel >= 0.4.9-3.20050714
+Requires:	ffmpeg-devel >= 0.4.9-4.20080822
 Requires:	lame-libs-devel >= 3.93.1
 Requires:	libdv-devel >= 0.104
 Requires:	libjpeg-devel
-Requires:	libmpeg3-devel >= 1.7
+Requires:	libmpeg3-devel >= 1.8
 Requires:	libogg-devel >= 2:1.1.2
 Requires:	libpng-devel >= 1.0.8
 Requires:	libvorbis-devel >= 1:1.1.1
@@ -98,11 +97,8 @@ Pożyteczne narzędzia od operowania na plikach w formacie Quicktime.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
-rm -rf faac-1.24 faad2-2.0 ffmpeg.* jpeg jpeg-mmx.* lame-* libdv-* libogg-* libvorbis-* x264.*
-
-sed -i -e 's#-I/usr/include/ffmpeg#-I/usr/include/libavcodec#g' Makefile*
+%{__rm} -r thirdparty/{faac-1.24,faad2-2.0,ffmpeg.*,jpeg,jpeg-mmx.*,lame-*,libdv-*,libogg-*,libvorbis-*,x264.*}
 
 %build
 %{__libtoolize}
@@ -130,18 +126,19 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%attr(755,root,root) %{_libdir}/libquicktime.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libquicktime.so.1
 
 %files devel
 %defattr(644,root,root,755)
 %doc docs/*.html
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
+%attr(755,root,root) %{_libdir}/libquicktime.so
+%{_libdir}/libquicktime.la
 %{_includedir}/quicktime
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/lib*.a
+%{_libdir}/libquicktime.a
 
 %files progs
 %defattr(644,root,root,755)
