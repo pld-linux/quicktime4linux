@@ -1,8 +1,7 @@
-diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
---- quicktime.orig/Makefile.am	Thu Jan  1 01:00:00 1970
-+++ quicktime/Makefile.am	Sat May 11 21:29:10 2002
-@@ -0,0 +1,49 @@
-+ENCORE_DIR = encore50
+--- quicktime4linux-2.3/Makefile.am.orig	1970-01-01 01:00:00.000000000 +0100
++++ quicktime4linux-2.3/Makefile.am	2008-08-27 23:09:04.538116710 +0200
+@@ -0,0 +1,52 @@
++ENCORE_DIR = thirdparty/encore50
 +DECORE_DIR = #decore50
 +ENCORE_INCLUDE = $(ENCORE_DIR)/encore.h
 +#DECORE_INCLUDE = $(DECORE_DIR)/decore.h
@@ -11,14 +10,15 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +lib_LTLIBRARIES = libquicktime.la
 +libquicktime_la_SOURCES = atom.c avcc.c avi_hdrl.c avi_ix.c avi_idx1.c avi_indx.c avi_movi.c \
 +	avi_odml.c avi_riff.c avi_strl.c cmodel_default.c cmodel_float.c cmodel_yuv420p.c cmodel_yuv422.c \
-+	codecs.c colormodels.c ctab.c dinf.c dref.c edts.c elst.c esds.c graphics.c hdlr.c \
++	codecs.c colormodels.c ctab.c dinf.c dref.c edts.c elst.c esds.c frma.c graphics.c hdlr.c \
 +	ima4.c jpeg.c libdv.c libmjpeg.c matrix.c mdat.c mdhd.c mdia.c minf.c \
-+	moov.c mp4a.c mpeg4.c mvhd.c plugin.c qtcache.c qtdv.c qtffmpeg.c qth264.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
++	moov.c mp4a.c mvhd.c plugin.c qtasf.c qtcache.c qtdv.c qtpng.c qtmp3.c quicktime.c raw.c rawaudio.c rle.c smhd.c \
 +	stbl.c stco.c stsc.c stsd.c stsdtable.c stss.c stsz.c stts.c tkhd.c trak.c twos.c \
-+	udta.c ulaw.c util.c v308.c v408.c v410.c vbraudio.c vmhd.c vorbis.c wma.c wmx2.c workarounds.c \
-+	yuv2.c yuv4.c yv12.c
++	udta.c ulaw.c util.c v308.c v408.c v410.c vbraudio.c vmhd.c vorbis.c wmx2.c workarounds.c \
++	yuv2.c yuv4.c yv12.c \
++	mpeg4.c qdm2.c qtffmpeg.c qth264.c wma.c
 +
-+libquicktime_la_LDFLAGS = -version-info 3:0:2
++libquicktime_la_LDFLAGS = -version-info 4:0:3
 +libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame -lfaad -lx264 \
 +	$(LIBDV_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
 +	-lavcodec $(ENCORE_DIR)/libencore.la -ldl -lpthread
@@ -28,19 +28,20 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +	libdv.h libmjpeg.h jpeg.h cmodel_permutation.h
 +
 +INCLUDES = $(LIBDV_CFLAGS) $(OGG_CFLAGS) $(VORBIS_CFLAGS) \
-+	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/ffmpeg \
++	   -I/usr/include/libmpeg3 -I/usr/include/lame -I/usr/include/libavcodec \
 +	   -I$(ENCORE_DIR) \
 +	   -DENCORE_INCLUDE=\"$(ENCORE_INCLUDE)\" \
 +	   -DLINUX -D_DECORE -D_REENTRANT \
 +	   -DHAVE_FIREWIRE -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 +
-+bin_PROGRAMS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv4toyuv qtrecover qtrechunk
++bin_PROGRAMS = qtdump qtmake_streamable qtinfo qtdechunk qtyuv2mov qtyuv4toyuv qtrecover qtrechunk
 +
 +qtdump_SOURCES = dump.c
 +qtmake_streamable_SOURCES = make_streamable.c
 +qtdechunk_SOURCES = dechunk.c
 +qtrechunk_SOURCES = rechunk.c
 +qtrecover_SOURCES = recover.c
++qtyuv2mov_SOURCES = yuv2mov.c
 +qtyuv4toyuv_SOURCES = yuv4toyuv.c
 +qtinfo_SOURCES = qtinfo.c
 +
@@ -49,12 +50,13 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +qtdechunk_LDADD = libquicktime.la
 +qtrechunk_LDADD = libquicktime.la
 +qtrecover_LDADD = libquicktime.la
++qtyuv2mov_LDADD = libquicktime.la
 +qtyuv4toyuv_LDADD = libquicktime.la
 +qtinfo_LDADD = libquicktime.la
 --- quicktime.orig/configure.ac	Thu Jan  1 01:00:00 1970
 +++ quicktime/configure.ac	Sat May 11 21:28:27 2002
 @@ -0,0 +1,36 @@
-+AC_INIT(quicktime4linux, 2.2)
++AC_INIT(quicktime4linux, 2.3)
 +AM_INIT_AUTOMAKE
 +AC_CONFIG_SRCDIR([atom.c])
 +AM_CONFIG_HEADER([config.h])
@@ -88,11 +90,10 @@ diff -Nur quicktime.orig/Makefile.am quicktime/Makefile.am
 +PKG_CHECK_MODULES(LIBDV, libdv >= 0.104)
 +
 +AC_CONFIG_FILES([Makefile
-+		 encore50/Makefile])
++		 thirdparty/encore50/Makefile])
 +AC_OUTPUT
-diff -Nur quicktime.orig/encore50/Makefile.am quicktime/encore50/Makefile.am
---- quicktime.orig/encore50/Makefile.am	Thu Jan  1 01:00:00 1970
-+++ quicktime/encore50/Makefile.am	Sat May 11 20:15:59 2002
+--- quicktime.orig/thirdparty/encore50/Makefile.am	Thu Jan  1 01:00:00 1970
++++ quicktime/thirdparty/encore50/Makefile.am	Sat May 11 20:15:59 2002
 @@ -0,0 +1,5 @@
 +noinst_LTLIBRARIES = libencore.la
 +

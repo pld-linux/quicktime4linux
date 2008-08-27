@@ -25,8 +25,8 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
  #include <pthread.h>
  #include <sys/time.h>
  
---- quicktime4linux-2.1/libmjpeg.h.orig	2005-08-09 07:35:17.000000000 +0200
-+++ quicktime4linux-2.1/libmjpeg.h	2005-10-11 21:02:25.040495192 +0200
+--- quicktime4linux-2.3/libmjpeg.h.orig	2008-02-03 14:06:52.000000000 +0100
++++ quicktime4linux-2.3/libmjpeg.h	2008-08-27 23:04:07.574121739 +0200
 @@ -30,9 +30,9 @@
  
  
@@ -36,6 +36,6 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
  #include <png.h>              /* Need setjmp.h as included by png.h */
 -#include "pthread.h"
 +#include <pthread.h>
+ #include <setjmp.h>
  
  #define MAXFIELDS 2
- #define QUICKTIME_MJPA_MARKSIZE 40
