@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl.UTF-8):	Obsługa formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.3
-Release:	3
+Release:	4
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
@@ -10,6 +10,7 @@ Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
 Patch0:		%{name}-acam.patch
 Patch1:		%{name}-libs.patch
 Patch2:		%{name}-x264.patch
+Patch3:		%{name}-ffmpeg.patch
 URL:		http://heroinewarrior.com/quicktime.php3
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -97,6 +98,7 @@ Pożyteczne narzędzia od operowania na plikach w formacie Quicktime.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p0
 
 %{__rm} -r thirdparty/{faac-1.24,faad2-2.0,ffmpeg.*,jpeg,jpeg-mmx.*,lame-*,libdv-*,libogg-*,libvorbis-*,x264.*}
 
