@@ -39,3 +39,14 @@ diff -uNr quicktime.orig/libdv.h quicktime/libdv.h
  #include <setjmp.h>
  
  #define MAXFIELDS 2
+--- quicktime4linux-2.3/Makefile.am~	2010-04-26 08:18:20.231296966 +0200
++++ quicktime4linux-2.3/Makefile.am	2010-04-26 08:22:23.634605098 +0200
+@@ -16,7 +16,7 @@
+ 	mpeg4.c qdm2.c qtffmpeg.c qth264.c wma.c
+ 
+ libquicktime_la_LDFLAGS = -version-info 4:0:3
+-libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame -lfaad -lx264 \
++libquicktime_la_LIBADD = -lpng -ljpeg -lmpeg3 -lavcodec -lmp3lame -lfaac -lfaad -lx264 \
+ 	$(LIBDV_LIBS) $(OGG_LIBS) $(VORBIS_LIBS) $(VORBISENC_LIBS) \
+ 	-lavcodec $(ENCORE_DIR)/libencore.la -ldl -lpthread
+ 
