@@ -2,7 +2,7 @@ Summary:	Quicktime for Linux
 Summary(pl.UTF-8):	Obsługa formatu Quicktime dla Linuksa
 Name:		quicktime4linux
 Version:	2.3
-Release:	9
+Release:	10
 License:	GPL
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/heroines/%{name}-%{version}-src.tar.bz2
