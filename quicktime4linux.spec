@@ -16,7 +16,7 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	faac-devel >= 1.24
 BuildRequires:	faad2-devel >= 2.0
-BuildRequires:	ffmpeg-devel >= 0.4.9-4.20080822
+BuildRequires:	ffmpeg-devel >= 0.6
 BuildRequires:	lame-libs-devel >= 3.93.1
 BuildRequires:	libdv-devel >= 0.104
 BuildRequires:	libjpeg-devel

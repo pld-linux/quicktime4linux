@@ -40,3 +40,34 @@
  			(int16_t*)(codec->work_buffer + codec->output_size * sample_size), 
              &bytes_decoded,
              codec->packet_buffer, 
+--- div3.c~	2007-01-09 08:09:49.000000000 +0100
++++ div3.c	2010-08-25 13:05:05.434797467 +0200
+@@ -275,7 +275,7 @@
+ 		case PIX_FMT_YUV420P:
+ 			input_cmodel = BC_YUV420P;
+ 			break;
+-		case PIX_FMT_YUV422:
++		case PIX_FMT_YUYV422:
+ 			input_cmodel = BC_YUV422;
+ 			break;
+ 		case PIX_FMT_YUV422P:
+--- qtffmpeg.c~	2010-08-25 12:55:42.000000000 +0200
++++ qtffmpeg.c	2010-08-25 13:05:16.681037643 +0200
+@@ -338,7 +338,7 @@
+ 		case PIX_FMT_YUVJ420P:
+ 			return 4;
+ 			break;
+-		case PIX_FMT_YUV422:
++		case PIX_FMT_YUYV422:
+ 			return 2;
+ 			break;
+ 		case PIX_FMT_YUV422P:
+@@ -546,7 +546,7 @@
+ 		case PIX_FMT_YUVJ420P:
+ 			input_cmodel = BC_YUV420P;
+ 			break;
+-		case PIX_FMT_YUV422:
++		case PIX_FMT_YUYV422:
+ 			input_cmodel = BC_YUV422;
+ 			break;
+ 		case PIX_FMT_YUV422P:
