@@ -95,10 +95,10 @@ Pożyteczne narzędzia od operowania na plikach w formacie Quicktime.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p0
+%patch -P0 -p1
+%patch -P1 -p1
+%patch -P2 -p1
+%patch -P3 -p0
 
 %{__rm} -r thirdparty/{faac-1.24,faad2-2.0,ffmpeg.*,jpeg,jpeg-mmx.*,lame-*,libdv-*,libogg-*,libvorbis-*,x264.*}
 
